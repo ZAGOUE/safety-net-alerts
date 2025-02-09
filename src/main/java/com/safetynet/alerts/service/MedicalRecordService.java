@@ -2,6 +2,8 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.JsonDataLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,38 +11,45 @@ import java.util.Optional;
 
 @Service
 public class MedicalRecordService {
+    private static final Logger logger = LoggerFactory.getLogger(MedicalRecordService.class);
     private final List<MedicalRecord> medicalRecords;
 
     public MedicalRecordService(JsonDataLoader jsonDataLoader) {
         this.medicalRecords = jsonDataLoader.getData().getMedicalrecords();
+        logger.info("✅ Chargement des dossiers médicaux terminé.");
     }
 
     public List<MedicalRecord> getAllMedicalRecords() {
+        logger.debug("🔍 Récupération de tous les dossiers médicaux.");
         return medicalRecords;
     }
 
-    public Optional<MedicalRecord> getMedicalRecord(String firstName, String lastName) {
+    public Optional<MedicalRecord> getMedicalRecordByName(String firstName, String lastName) {
+        logger.debug("🔍 Recherche du dossier médical pour : {} {}", firstName, lastName);
         return medicalRecords.stream()
-                .filter(m -> m.getFirstName().equalsIgnoreCase(firstName) &&
-                        m.getLastName().equalsIgnoreCase(lastName))
+                .filter(medicalRecord -> medicalRecord.getFirstName().equalsIgnoreCase(firstName)
+                        && medicalRecord.getLastName().equalsIgnoreCase(lastName))
                 .findFirst();
     }
 
     public boolean addMedicalRecord(MedicalRecord medicalRecord) {
-        return medicalRecords.add(medicalRecord);
-    }
-
-    public boolean updateMedicalRecord(String firstName, String lastName, MedicalRecord updatedRecord) {
-        return getMedicalRecord(firstName, lastName).map(m -> {
-            m.setBirthdate(updatedRecord.getBirthdate());
-            m.setMedications(updatedRecord.getMedications());
-            m.setAllergies(updatedRecord.getAllergies());
-            return true;
-        }).orElse(false);
+        if (getMedicalRecordByName(medicalRecord.getFirstName(), medicalRecord.getLastName()).isPresent()) {
+            logger.error("❌ Échec : Un dossier médical existe déjà pour {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
+            return false;
+        }
+        medicalRecords.add(medicalRecord);
+        logger.info("✅ Nouveau dossier médical ajouté pour {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
+        return true;
     }
 
     public boolean deleteMedicalRecord(String firstName, String lastName) {
-        return medicalRecords.removeIf(m -> m.getFirstName().equalsIgnoreCase(firstName) &&
-                m.getLastName().equalsIgnoreCase(lastName));
+        if (medicalRecords.removeIf(record -> record.getFirstName().equalsIgnoreCase(firstName)
+                && record.getLastName().equalsIgnoreCase(lastName))) {
+            logger.info("🗑️ Suppression réussie du dossier médical de {} {}", firstName, lastName);
+            return true;
+        } else {
+            logger.error("❌ Échec : Aucun dossier médical trouvé pour {} {}", firstName, lastName);
+            return false;
+        }
     }
 }
