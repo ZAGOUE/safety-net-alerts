@@ -2,19 +2,13 @@ package com.safetynet.alerts.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.alerts.model.DataWrapper;
-import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.model.Firestation;
-import com.safetynet.alerts.model.MedicalRecord;
 import org.springframework.stereotype.Repository;
 
 import java.io.InputStream;
-import java.util.List;
 
 @Repository
 public class JsonDataLoader {
-    private final List<Person> persons;
-    private final List<Firestation> firestations;
-    private final List<MedicalRecord> medicalrecords;
+    private final DataWrapper data;
 
     public JsonDataLoader() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -25,13 +19,9 @@ public class JsonDataLoader {
             System.out.println("✅ data.json trouvé, chargement des données...");
 
             // Désérialisation complète du JSON
-            DataWrapper data = objectMapper.readValue(inputStream, DataWrapper.class);
+            this.data = objectMapper.readValue(inputStream, DataWrapper.class);
 
-            this.persons = data.getPersons();
-            this.firestations = data.getFirestations();
-            this.medicalrecords = data.getMedicalrecords();
-
-            if (persons == null || firestations == null || medicalrecords == null) {
+            if (data.getPersons() == null || data.getFirestations() == null || data.getMedicalrecords() == null) {
                 throw new RuntimeException("❌ ERREUR : Certaines données sont manquantes dans data.json !");
             }
 
@@ -41,7 +31,7 @@ public class JsonDataLoader {
         }
     }
 
-    public List<Person> getAllPersons() { return persons; }
-    public List<Firestation> getAllFirestations() { return firestations; }
-    public List<MedicalRecord> getAllMedicalRecords() { return medicalrecords; }
+    public DataWrapper getData() {
+        return data;
+    }
 }
