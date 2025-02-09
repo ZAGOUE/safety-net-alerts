@@ -1,0 +1,5 @@
+### Récupérer toutes les personnes
+GET http://localhost:8080/person
+
+### Récupérer une personne par nom
+GET http://localhost:8080/person/Jamie/Peters
