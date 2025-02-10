@@ -42,6 +42,23 @@ public class MedicalRecordService {
         return true;
     }
 
+    // ✅ Implémentation de updateMedicalRecord
+    public boolean updateMedicalRecord(String firstName, String lastName, MedicalRecord updatedRecord) {
+        Optional<MedicalRecord> existingRecord = medicalRecords.stream()
+                .filter(record -> record.getFirstName().equalsIgnoreCase(firstName)
+                        && record.getLastName().equalsIgnoreCase(lastName))
+                .findFirst();
+
+        if (existingRecord.isPresent()) {
+            MedicalRecord recordToUpdate = existingRecord.get();
+            recordToUpdate.setBirthdate(updatedRecord.getBirthdate());
+            recordToUpdate.setMedications(updatedRecord.getMedications());
+            recordToUpdate.setAllergies(updatedRecord.getAllergies());
+            return true; // ✅ Mise à jour réussie
+        }
+        return false; // ❌ Dossier médical non trouvé
+    }
+
     public boolean deleteMedicalRecord(String firstName, String lastName) {
         if (medicalRecords.removeIf(record -> record.getFirstName().equalsIgnoreCase(firstName)
                 && record.getLastName().equalsIgnoreCase(lastName))) {

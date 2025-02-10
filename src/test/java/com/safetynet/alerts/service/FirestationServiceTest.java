@@ -18,17 +18,18 @@ class FirestationServiceTest {
 
     @Test
     void testAddFirestation() {
-        Firestation firestation = new Firestation("150 Main St", 5);
-        assertTrue(firestationService.addFirestation(firestation));
-    }
+        Firestation firestation = new Firestation("999 New Ave", 6);
+     assertTrue(firestationService.addFirestation(firestation));
+  }
 
     @Test
     void testUpdateFirestation() {
-        assertTrue(firestationService.updateFirestation("150 Main St", 7));
+        Firestation updatefirestation = new Firestation("1509 Culver St", 5); // Crée un objet Firestation
+        assertTrue(firestationService.updateFirestation("1509 Culver St", updatefirestation)); // Utilise l'objet
     }
 
     @Test
     void testDeleteFirestation() {
-        assertTrue(firestationService.deleteFirestation("150 Main St"));
+        assertTrue(firestationService.deleteFirestation("1509 Culver St"));
     }
 }

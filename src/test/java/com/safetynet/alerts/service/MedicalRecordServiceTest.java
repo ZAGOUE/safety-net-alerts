@@ -24,13 +24,17 @@ class MedicalRecordServiceTest {
 
     @Test
     void testUpdateMedicalRecord() {
-        MedicalRecord record = new MedicalRecord("Jane", "Doe", "01/01/1990", List.of("Ibuprofen"), List.of("Peanuts"));
-        assertTrue(medicalRecordService.updateMedicalRecord("Jane", "Doe", record));
+        MedicalRecord updatedRecord = new MedicalRecord("John", "Boyd", "03/06/1984",
+                List.of("med1:500mg", "med2:250mg"),
+                List.of("pollen", "nuts"));
+
+        assertTrue(medicalRecordService.updateMedicalRecord("John", "Boyd", updatedRecord));
     }
+
 
     @Test
     void testDeleteMedicalRecord() {
-        assertTrue(medicalRecordService.deleteMedicalRecord("Jane", "Doe"));
+        assertTrue(medicalRecordService.deleteMedicalRecord("John", "Boyd"));
     }
 }
 

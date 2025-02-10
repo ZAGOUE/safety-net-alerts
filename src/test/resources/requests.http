@@ -1,5 +1,35 @@
 ### Récupérer toutes les personnes
 GET http://localhost:8080/person
 
+### Récupérer toutes les stations
+GET http://localhost:8080/firestation
+
+### Récupérer toutes les informations medicales
+GET http://localhost:8080/medicalRecord
+
 ### Récupérer une personne par nom
 GET http://localhost:8080/person/Jamie/Peters
+
+### 🔍 Obtenir les personnes couvertes par une station
+GET http://localhost:8080/alert/firestation?stationNumber=1
+
+### 🔍 Obtenir les enfants à une adresse
+GET http://localhost:8080/alert/childAlert?address=1509 Culver St
+
+### 📞 Obtenir les numéros de téléphone des personnes couvertes par une station
+GET http://localhost:8080/alert/phoneAlert?firestation=2
+
+### 📧 Obtenir les emails de tous les habitants d'une ville
+GET http://localhost:8080/alert/communityEmail?city=Culver
+
+### Test /fire?address=
+GET http://localhost:8080/alert/fire?address=1509 Culver St
+
+### Test /flood/stations?stations=
+GET http://localhost:8080/alert/flood/stations?stations=1,2,3
+
+### Test du dernier endpoint
+GET http://localhost:8080/alert/personInfolastName?lastName=Boyd
+Accept: application/json
+
+
