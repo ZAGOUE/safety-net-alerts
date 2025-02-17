@@ -33,12 +33,27 @@ public class MedicalRecord {
 
     // ✅ **Conversion String → LocalDate**
     public LocalDate getBirthdateAsLocalDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        return LocalDate.parse(this.birthdate, formatter);
+        if (this.birthdate == null || this.birthdate.isEmpty()) {
+            System.out.println("⚠️ Birthdate NULL ou vide pour " + this.firstName + " " + this.lastName);
+            return null;
+        }
+        System.out.println("📅 Birthdate chargé pour " + this.firstName + " " + this.lastName + " : " + this.birthdate);
+
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            return LocalDate.parse(this.birthdate, formatter);
+        } catch (Exception e) {
+            System.out.println("❌ ERREUR : Impossible de convertir la date " + this.birthdate);
+            return null;
+        }
     }
 
     // ✅ **Méthode pour calculer l'âge**
     public int getAge() {
-        return Period.between(getBirthdateAsLocalDate(), LocalDate.now()).getYears();
+        LocalDate birthDate = getBirthdateAsLocalDate();
+        if (birthDate == null) {
+            return -1; // Retourne -1 si la date est invalide
+        }
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 }

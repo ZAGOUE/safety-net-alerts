@@ -1,5 +1,7 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.PersonBasicDTO;
+import com.safetynet.alerts.dto.PersonDTO;
 import com.safetynet.alerts.model.Firestation;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
@@ -23,45 +25,21 @@ public class FirestationService {
     public List<Firestation> getAllFirestations() {
         return jsonDataLoader.getAllFirestations();
     }
-
-    public Optional<Firestation> getFirestationByAddress(String address) {
-        return jsonDataLoader.getAllFirestations().stream()
-                .filter(f -> f.getAddress().equalsIgnoreCase(address))
-                .findFirst();
-    }
-
-    public boolean addFirestation(Firestation firestation) {
-        logger.info("🚒 Ajout d'une caserne pour l'adresse : {}", firestation.getAddress());
-        if (getFirestationByAddress(firestation.getAddress()).isPresent()) {
-            return false;
+   // Mettre à jour les informations de la caserne
+    public  boolean updateFirestation(String address, Firestation updateFirestation) {
+        List<Firestation> firestations = jsonDataLoader.getAllFirestations();
+        for (Firestation firestation : firestations) {
+            if (firestation.getAddress().equalsIgnoreCase(address)) {
+                firestation.setStation(updateFirestation.getStation());
+                logger.info("firestation is up to date : {}", address);
+                return true;
+            }
         }
-        jsonDataLoader.getAllFirestations().add(firestation);
-        return true;
-    }
-
-    public boolean updateFirestation(String address, Firestation updatedFirestation) {
-        Optional<Firestation> firestationOpt = getFirestationByAddress(address);
-        if (firestationOpt.isPresent()) {
-            logger.info("Mise à jouir de la caserne pour l'adresse : {}", address);
-            firestationOpt.get().setStation(updatedFirestation.getStation());
-            return true;
-        }
-        logger.error("caserne non trouvé à l'adresse : {}", address);
+        logger.warn("firestation not found for update : {}", address);
         return false;
     }
 
-    public boolean deleteFirestation(String address) {
-        boolean removed = jsonDataLoader.getAllFirestations().removeIf(f -> f.getAddress().equalsIgnoreCase(address));
-
-        if (removed) {
-            logger.info("✅ Caserne supprimée à l'adresse: {}", address);
-        } else {
-            logger.error("❌ Caserne NON trouvée à l'adresse: {}", address);
-        }
-        return removed;
-    }
-
-    // ✅ **Nouvelle méthode pour `/firestation?stationNumber=<station_number>`**
+    // ✅ Récupérer les personnes couvertes par une caserne
     public Map<String, Object> getPersonsByStation(int stationNumber) {
         List<Person> personsCovered = jsonDataLoader.getAllPersons().stream()
                 .filter(person -> jsonDataLoader.getAllFirestations().stream()
@@ -72,17 +50,17 @@ public class FirestationService {
         long adults = personsCovered.stream().filter(p -> p.getAge() > 18).count();
         long children = personsCovered.size() - adults;
 
-        logger.info("{} adultes et {} enfants trouvés pour la station {}", adults, children, stationNumber);
-
         Map<String, Object> response = new HashMap<>();
-        response.put("persons", personsCovered);
+        response.put("persons", personsCovered.stream()
+                .map(person -> new PersonBasicDTO(person.getFirstName(), person.getLastName(), person.getAddress(), person.getPhone()))
+                .collect(Collectors.toList()));
         response.put("adults", adults);
         response.put("children", children);
 
         return response;
     }
 
-    // ✅ **Nouvelle méthode pour `/phoneAlert?firestation=<firestation_number>`**
+    // ✅ Récupérer les numéros de téléphone des résidents couverts par une caserne
     public List<String> getPhoneNumbersByStation(int stationNumber) {
         return jsonDataLoader.getAllPersons().stream()
                 .filter(person -> jsonDataLoader.getAllFirestations().stream()
@@ -93,86 +71,85 @@ public class FirestationService {
                 .collect(Collectors.toList());
     }
 
-    public Map<String, Object> getFireAlertByAddress(String address) {
-        Optional<Firestation> firestation = jsonDataLoader.getAllFirestations().stream()
-                .filter(fs -> fs.getAddress().equalsIgnoreCase(address))
-                .findFirst();
-
+    // ✅ Récupérer les habitants d'une adresse et leur caserne associée
+    public Map<String, Object> getFireDetails(String address) {
         List<Person> residents = jsonDataLoader.getAllPersons().stream()
                 .filter(person -> person.getAddress().equalsIgnoreCase(address))
                 .collect(Collectors.toList());
 
-        if (firestation.isEmpty() || residents.isEmpty()) {
-            return Collections.emptyMap();
-        }
+        Optional<Firestation> firestation = jsonDataLoader.getAllFirestations().stream()
+                .filter(f -> f.getAddress().equalsIgnoreCase(address))
+                .findFirst();
 
-        List<Map<String, Object>> residentDetails = residents.stream()
-                .map(person -> Map.of(
-                        "firstName", person.getFirstName(),
-                        "lastName", person.getLastName(),
-                        "phone", person.getPhone(),
-                        "age", person.getAge(),
-                        "medications", jsonDataLoader.getAllMedicalRecords().stream()
-                                .filter(mr -> mr.getFirstName().equals(person.getFirstName()) &&
-                                        mr.getLastName().equals(person.getLastName()))
-                                .map(MedicalRecord::getMedications)
-                                .findFirst()
-                                .orElse(Collections.emptyList()),
-                        "allergies", jsonDataLoader.getAllMedicalRecords().stream()
-                                .filter(mr -> mr.getFirstName().equals(person.getFirstName()) &&
-                                        mr.getLastName().equals(person.getLastName()))
-                                .map(MedicalRecord::getAllergies)
-                                .findFirst()
-                                .orElse(Collections.emptyList())
-                ))
+        List<PersonDTO> residentDetails = residents.stream()
+                .map(person -> {
+                    MedicalRecord medicalRecord = jsonDataLoader.getAllMedicalRecords().stream()
+                            .filter(med -> med.getFirstName().equals(person.getFirstName()) && med.getLastName().equals(person.getLastName()))
+                            .findFirst()
+                            .orElse(null);
+                    return new PersonDTO(person, medicalRecord);
+                })
                 .collect(Collectors.toList());
 
-        return Map.of(
-                "firestationNumber", firestation.get().getStation(),
-                "residents", residentDetails
-        );
+        Map<String, Object> response = new HashMap<>();
+        response.put("stationNumber", firestation.map(Firestation::getStation).orElse(null));
+        response.put("residents", residentDetails);
+
+        return response;
     }
 
-    public Map<String, List<Map<String, Object>>> getFloodStations(List<Integer> stationNumbers) {
-        // Récupérer toutes les adresses associées aux numéros de casernes demandées
-        List<String> addresses = jsonDataLoader.getAllFirestations().stream()
-                .filter(fs -> stationNumbers.contains(fs.getStation()))
+   // Récupérer les adresses d'une caserne
+    public Firestation getFirestationByAddress(String address) {
+        return jsonDataLoader.getAllFirestations().stream()
+                .filter(firestation -> firestation.getAddress().equalsIgnoreCase(address))
+                .findFirst().orElse(null);
+    }
+    public Map<String, List<PersonDTO>> getFloodStations(List<Integer> stationNumbers) {
+        // Récupération des adresses desservies par les stations fournies
+        Set<String> addresses = jsonDataLoader.getAllFirestations().stream()
+                .filter(firestation -> stationNumbers.contains(firestation.getStation()))
                 .map(Firestation::getAddress)
-                .distinct()
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
-        // Regrouper les habitants par adresse
-        Map<String, List<Map<String, Object>>> households = new HashMap<>();
+        // Récupération des habitants pour chaque adresse
+        Map<String, List<PersonDTO>> result = new HashMap<>();
         for (String address : addresses) {
-            List<Map<String, Object>> residents = jsonDataLoader.getAllPersons().stream()
+            List<Person> residents = jsonDataLoader.getAllPersons().stream()
                     .filter(person -> person.getAddress().equalsIgnoreCase(address))
-                    .map(person -> Map.of(
-                            "firstName", person.getFirstName(),
-                            "lastName", person.getLastName(),
-                            "phone", person.getPhone(),
-                            "age", person.getAge(),
-                            "medications", jsonDataLoader.getAllMedicalRecords().stream()
-                                    .filter(mr -> mr.getFirstName().equals(person.getFirstName()) &&
-                                            mr.getLastName().equals(person.getLastName()))
-                                    .map(MedicalRecord::getMedications)
-                                    .findFirst()
-                                    .orElse(Collections.emptyList()),
-                            "allergies", jsonDataLoader.getAllMedicalRecords().stream()
-                                    .filter(mr -> mr.getFirstName().equals(person.getFirstName()) &&
-                                            mr.getLastName().equals(person.getLastName()))
-                                    .map(MedicalRecord::getAllergies)
-                                    .findFirst()
-                                    .orElse(Collections.emptyList())
-                    ))
                     .collect(Collectors.toList());
 
-            if (!residents.isEmpty()) {
-                households.put(address, residents);
-            }
-        }
+            List<PersonDTO> personDTOs = residents.stream()
+                    .map(person -> {
+                        MedicalRecord medicalRecord = jsonDataLoader.getAllMedicalRecords().stream()
+                                .filter(record -> record.getFirstName().equalsIgnoreCase(person.getFirstName())
+                                        && record.getLastName().equalsIgnoreCase(person.getLastName()))
+                                .findFirst()
+                                .orElse(null);
 
-        return households;
+                        return new PersonDTO(person, medicalRecord);
+                    })
+                    .collect(Collectors.toList());
+
+            result.put(address, personDTOs);
+        }
+        return result;
     }
+
+    // Recherche les informations des habitants et leurs antécédents médicaux
+    public List<PersonDTO> getFireInfoByAddress(String address) {
+        List<Person> residents = jsonDataLoader.getAllPersons().stream()
+                .filter(person -> person.getAddress().equalsIgnoreCase(address))
+                .collect(Collectors.toList());
+        return residents.stream().map(person -> {
+                    MedicalRecord medicalRecord = jsonDataLoader.getAllMedicalRecords().stream()
+                            .filter(record -> record.getFirstName().equalsIgnoreCase(person.getFirstName())
+                                    && record.getLastName().equalsIgnoreCase(person.getLastName()))
+                            .findFirst().orElse(null);
+                    return new PersonDTO(person, medicalRecord);
+                })
+                .collect(Collectors.toList());
+    }
+
 
 
 }

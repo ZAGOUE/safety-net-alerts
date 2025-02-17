@@ -45,4 +45,7 @@ public class JsonDataLoader {
     public List<MedicalRecord> getAllMedicalRecords() {
         return data.getMedicalrecords();
     }
+    
 }
+
+

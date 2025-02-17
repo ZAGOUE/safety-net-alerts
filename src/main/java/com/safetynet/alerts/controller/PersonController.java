@@ -1,5 +1,6 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.dto.PersonDTO;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.service.PersonService;
 import org.slf4j.Logger;
@@ -21,10 +22,9 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Person>> getAllPersons() {
+    public ResponseEntity<List<PersonDTO>> getAllPersons() {
         logger.info("🔍 Récupération de toutes les personnes...");
-        List<Person> persons = personService.getAllPersons();
-        return ResponseEntity.ok(persons);
+        return ResponseEntity.ok(personService.getAllPersons());
     }
 
     @GetMapping("/{firstName}/{lastName}")

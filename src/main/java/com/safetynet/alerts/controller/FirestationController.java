@@ -29,20 +29,11 @@ public class FirestationController {
     @GetMapping("/{address}")
     public ResponseEntity<Firestation> getFirestationByAddress(@PathVariable String address) {
         logger.info("📥 Requête GET - Recherche de la caserne pour l'adresse : {}", address);
-        Optional<Firestation> firestation = firestationService.getFirestationByAddress(address);
+        Optional<Firestation> firestation = Optional.ofNullable(firestationService.getFirestationByAddress(address));
         return firestation.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<String> addFirestation(@RequestBody Firestation firestation) {
-        logger.info("📥 Requête POST - Ajout d'une nouvelle caserne pour {}", firestation.getAddress());
-        if (firestationService.addFirestation(firestation)) {
-            return ResponseEntity.ok("✅ Caserne ajoutée avec succès.");
-        } else {
-            return ResponseEntity.badRequest().body("❌ Une caserne dessert déjà cette adresse.");
-        }
-    }
 
     @PutMapping("/{address}")
     public ResponseEntity<String> updateFirestation(@PathVariable String address, @RequestBody Firestation updatedFirestation) {
@@ -54,13 +45,5 @@ public class FirestationController {
         }
     }
 
-    @DeleteMapping("/{address}")
-    public ResponseEntity<String> deleteFirestation(@PathVariable String address) {
-        logger.info("📥 Requête DELETE - Suppression de la caserne pour {}", address);
-        if (firestationService.deleteFirestation(address)) {
-            return ResponseEntity.ok("✅ Suppression réussie.");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
 }

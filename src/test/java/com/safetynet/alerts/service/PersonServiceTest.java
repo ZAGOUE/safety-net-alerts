@@ -1,5 +1,6 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.PersonDTO;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.JsonDataLoader;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,11 +49,19 @@ class PersonServiceTest {
 
     @Test
     void testUpdateNonExistingPerson() {
-        Person updatedPerson = new Person("Ghost", "Person", "Unknown St", "Nowhere", "00000", "000-0000", "ghost@example.com", "00/00/0000");
+        // ✅ Utilisation d'une date valide
+        Person updatedPerson = new Person("Ghost", "Person", "Unknown St", "Nowhere", "00000", "000-0000", "ghost@example.com", "01/01/1900");
+
+        // 🔍 On tente de mettre à jour une personne qui n'existe pas
         boolean updated = personService.updatePerson("Ghost", "Person", updatedPerson);
-        logger.info("❌ Test mise à jour d'une personne inexistante : {}", updated ? "ÉCHEC" : "SUCCÈS");
+
+        // ✅ Amélioration des logs
+        logger.info("✅ Test mise à jour d'une personne inexistante : {}", updated ? "PROBLÈME ❌" : "SUCCÈS ✅");
+
+        // ✅ Vérification que la mise à jour ne s'est pas faite
         assertFalse(updated);
     }
+
 
     @Test
     void testDeletePerson() {
@@ -70,9 +79,19 @@ class PersonServiceTest {
 
     @Test
     void testGetAllPersons() {
-        List<Person> persons = personService.getAllPersons();
+        List<PersonDTO> persons = personService.getAllPersons();
+
+        // Vérification que la liste n'est pas nulle
+        assertNotNull(persons, "La liste des personnes ne doit pas être nulle.");
+
+        // Vérification que la liste n'est pas vide
+        assertFalse(persons.isEmpty(), "La liste des personnes ne doit pas être vide.");
+
+        // Log seulement si la liste est valide
         logger.info("✅ Test récupération de toutes les personnes : {} personnes trouvées", persons.size());
-        assertNotNull(persons);
-        assertFalse(persons.isEmpty());
+
+        // Vérification de la cohérence des données
+        assertEquals(persons.size(), personService.getAllPersons().size());
     }
+
 }

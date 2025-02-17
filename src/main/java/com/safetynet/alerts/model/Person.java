@@ -39,13 +39,22 @@ public class Person {
     // ✅ **Conversion de `birthdate` en LocalDate**
     @JsonIgnore
     public LocalDate getBirthdateAsLocalDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy"); // Format du fichier JSON
+        if (this.birthdate == null || this.birthdate.isEmpty()) {
+            return null; // Retourne null si la date de naissance est absente
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         return LocalDate.parse(this.birthdate, formatter);
     }
+
 
     // ✅ **Méthode pour obtenir l'âge**
     @JsonIgnore
     public int getAge() {
-        return Period.between(getBirthdateAsLocalDate(), LocalDate.now()).getYears();
+        LocalDate birthDate = getBirthdateAsLocalDate();
+        if (birthDate == null) {
+            return -1; // Retourne -1 si la date de naissance est inconnue
+        }
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
+
 }
