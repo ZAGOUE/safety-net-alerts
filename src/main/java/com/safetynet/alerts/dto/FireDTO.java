@@ -11,6 +11,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class FireDTO {
-    private String stationNumber; // Numéro de la caserne de pompiers
-    private List<PersonMedicalDTO> residents; // Liste des résidents
+    private List<PersonDTO> residents;
+    private int stationNumber;
+
+    @Override
+    public String toString() {
+        return "FireDTO{" +
+                "residents=" + residents +
+                ", stationNumber=" + stationNumber +
+                '}';
+    }
 }

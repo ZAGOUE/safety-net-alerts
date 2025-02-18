@@ -2,10 +2,14 @@ package com.safetynet.alerts.service;
 
 
 import com.safetynet.alerts.dto.PersonDTO;
+import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.JsonDataLoader;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -28,7 +32,7 @@ public class PersonService {
     public Map<String, Object> getChildrenByAddress(String address) {
         List<Person> personsAtAddress = jsonDataLoader.getAllPersons().stream()
                 .filter(person -> person.getAddress().equalsIgnoreCase(address))
-                .collect(Collectors.toList());
+                .toList();
 
         List<MedicalRecord> medicalRecords = jsonDataLoader.getAllMedicalRecords();
 
@@ -62,12 +66,13 @@ public class PersonService {
     }
 
     // ✅ Récupérer les emails d'une ville
-    public List<String> getCommunityEmails(String city) {
+    public Set<String> getCommunityEmails(String city) {
         return jsonDataLoader.getAllPersons().stream()
-                .filter(p -> p.getCity().equalsIgnoreCase(city))
+                .filter(person -> person.getCity().equalsIgnoreCase(city))
                 .map(Person::getEmail)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
+
 
     public Optional<Person> getPersonByName(String firstName, String lastName) {
         return jsonDataLoader.getAllPersons().stream()
@@ -104,16 +109,48 @@ public class PersonService {
         return jsonDataLoader.getAllPersons().removeIf(
                 p -> p.getFirstName().equalsIgnoreCase(firstName) && p.getLastName().equalsIgnoreCase(lastName));
     }
+    private String convertListToString(List<String> list) {
+        return (list != null) ? String.join(", ", list) : "";
+    }
 
-    public List<PersonDTO> getPersonInfoByLastName(String lastName) {
+
+
+    public List<PersonInfoDTO> getPersonInfoByLastName(String lastName) {
         return jsonDataLoader.getAllPersons().stream()
                 .filter(person -> person.getLastName().equalsIgnoreCase(lastName))
-                .map(person -> new PersonDTO(person, jsonDataLoader.getAllMedicalRecords()
-                        .stream()
-                        .filter(medicalRecord -> medicalRecord.getFirstName().equalsIgnoreCase(person.getFirstName()) &&
-                                medicalRecord.getLastName().equalsIgnoreCase(person.getLastName()))
-                        .findFirst().orElse(null)))
+                .map(person -> {
+                    MedicalRecord record = jsonDataLoader.getAllMedicalRecords().stream()
+                            .filter(med -> med.getFirstName().equalsIgnoreCase(person.getFirstName())
+                                    && med.getLastName().equalsIgnoreCase(person.getLastName()))
+                            .findFirst()
+                            .orElse(null);
+
+                    // 🧮 Calcul de l'âge
+                    int age = record != null ? calculateAge(record.getBirthdate()) : 0;
+
+                    // 🔄 Conversion des listes en chaînes de caractères
+                    String medications = record != null ? String.join(", ", record.getMedications()) : "";
+                    String allergies = record != null ? String.join(", ", record.getAllergies()) : "";
+
+                    return new PersonInfoDTO(
+                            person.getLastName(),
+                            person.getAddress(),
+                            person.getEmail(),
+                            age,
+                            medications,
+                            allergies
+                    );
+                })
                 .collect(Collectors.toList());
+    }
+
+
+
+
+    private int calculateAge(String birthdate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDate birthDate = LocalDate.parse(birthdate, formatter);
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
 
