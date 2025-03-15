@@ -1,5 +1,6 @@
-package com.safetynet.alerts.dto;
+package com.safetynet.alerts.dto.unused;
 
+import com.safetynet.alerts.dto.PersonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

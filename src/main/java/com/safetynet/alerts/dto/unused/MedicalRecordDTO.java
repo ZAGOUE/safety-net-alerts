@@ -1,10 +1,11 @@
-package com.safetynet.alerts.dto;
+package com.safetynet.alerts.dto.unused;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
+// Ce DTO servira pour les requêtes qui ont besoin des données médicales.
 @Getter
 @Setter
 public class MedicalRecordDTO {

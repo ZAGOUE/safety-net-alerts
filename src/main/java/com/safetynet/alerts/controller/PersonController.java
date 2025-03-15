@@ -23,13 +23,13 @@ public class PersonController {
 
     @GetMapping
     public ResponseEntity<List<PersonDTO>> getAllPersons() {
-        logger.info("🔍 Récupération de toutes les personnes...");
+        logger.info("Récupération de toutes les personnes...");
         return ResponseEntity.ok(personService.getAllPersons());
     }
 
     @GetMapping("/{firstName}/{lastName}")
     public ResponseEntity<Person> getPersonByName(@PathVariable String firstName, @PathVariable String lastName) {
-        logger.info("📥 Requête GET - Recherche de la personne : {} {}", firstName, lastName);
+        logger.info("Requête GET - Recherche de la personne : {} {}", firstName, lastName);
         Optional<Person> person = personService.getPersonByName(firstName, lastName);
         return person.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -37,19 +37,19 @@ public class PersonController {
 
     @PostMapping
     public ResponseEntity<String> addPerson(@RequestBody Person person) {
-        logger.info("📥 Requête POST - Ajout d'une nouvelle personne : {} {}", person.getFirstName(), person.getLastName());
+        logger.info("Requête POST - Ajout d'une nouvelle personne : {} {}", person.getFirstName(), person.getLastName());
         if (personService.addPerson(person)) {
-            return ResponseEntity.ok("✅ Personne ajoutée avec succès.");
+            return ResponseEntity.ok("Personne ajoutée avec succès.");
         } else {
-            return ResponseEntity.badRequest().body("❌ La personne existe déjà.");
+            return ResponseEntity.badRequest().body("La personne existe déjà.");
         }
     }
 
     @PutMapping("/{firstName}/{lastName}")
     public ResponseEntity<String> updatePerson(@PathVariable String firstName, @PathVariable String lastName, @RequestBody Person updatedPerson) {
-        logger.info("📥 Requête PUT - Mise à jour de la personne : {} {}", firstName, lastName);
+        logger.info("Requête PUT - Mise à jour de la personne : {} {}", firstName, lastName);
         if (personService.updatePerson(firstName, lastName, updatedPerson)) {
-            return ResponseEntity.ok("✅ Mise à jour réussie.");
+            return ResponseEntity.ok("Mise à jour réussie.");
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -57,9 +57,9 @@ public class PersonController {
 
     @DeleteMapping("/{firstName}/{lastName}")
     public ResponseEntity<String> deletePerson(@PathVariable String firstName, @PathVariable String lastName) {
-        logger.info("📥 Requête DELETE - Suppression de la personne : {} {}", firstName, lastName);
+        logger.info("Requête DELETE - Suppression de la personne : {} {}", firstName, lastName);
         if (personService.deletePerson(firstName, lastName)) {
-            return ResponseEntity.ok("✅ Suppression réussie.");
+            return ResponseEntity.ok("Suppression réussie.");
         } else {
             return ResponseEntity.notFound().build();
         }

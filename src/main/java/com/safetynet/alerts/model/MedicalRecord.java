@@ -12,12 +12,12 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor // ✅ Nécessaire pour la désérialisation JSON
+@NoArgsConstructor
 public class MedicalRecord {
     private String firstName;
     private String lastName;
 
-    @JsonProperty("birthdate") // ✅ Pour bien mapper la clé JSON
+    @JsonProperty("birthdate") // Pour bien mapper la clé JSON
     private String birthdate;
 
     private List<String> medications;
@@ -30,25 +30,28 @@ public class MedicalRecord {
         this.medications = medications;
         this.allergies = allergies;
     }
-
-    // ✅ **Conversion String → LocalDate**
+    /**
+     * Conversion String → LocalDate
+    */
     public LocalDate getBirthdateAsLocalDate() {
         if (this.birthdate == null || this.birthdate.isEmpty()) {
-            System.out.println("⚠️ Birthdate NULL ou vide pour " + this.firstName + " " + this.lastName);
+            System.out.println("Birthdate NULL ou vide pour " + this.firstName + " " + this.lastName);
             return null;
         }
-        System.out.println("📅 Birthdate chargé pour " + this.firstName + " " + this.lastName + " : " + this.birthdate);
+        System.out.println("Birthdate chargé pour " + this.firstName + " " + this.lastName + " : " + this.birthdate);
 
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
             return LocalDate.parse(this.birthdate, formatter);
         } catch (Exception e) {
-            System.out.println("❌ ERREUR : Impossible de convertir la date " + this.birthdate);
+            System.out.println("ERREUR : Impossible de convertir la date " + this.birthdate);
             return null;
         }
     }
 
-    // ✅ **Méthode pour calculer l'âge**
+    /**
+     * Méthode pour calculer l'âge
+     */
     public int getAge() {
         LocalDate birthDate = getBirthdateAsLocalDate();
         if (birthDate == null) {

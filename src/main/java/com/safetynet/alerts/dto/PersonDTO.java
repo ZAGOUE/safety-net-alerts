@@ -10,6 +10,9 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Ce DTO servira pour les personnes avec des paramètres
+ */
 @Getter
 @Setter
 public class PersonDTO {

@@ -28,44 +28,10 @@ public class PersonService {
         this.jsonDataLoader = jsonDataLoader;
     }
 
-    // ✅ Récupérer les enfants et les adultes d'un foyer
-    public Map<String, Object> getChildrenByAddress(String address) {
-        List<Person> personsAtAddress = jsonDataLoader.getAllPersons().stream()
-                .filter(person -> person.getAddress().equalsIgnoreCase(address))
-                .toList();
 
-        List<MedicalRecord> medicalRecords = jsonDataLoader.getAllMedicalRecords();
-
-        List<PersonDTO> children = personsAtAddress.stream()
-                .filter(person -> person.getAge() <= 18)
-                .map(person -> {
-                    MedicalRecord medicalRecord = medicalRecords.stream()
-                            .filter(med -> med.getFirstName().equals(person.getFirstName()) && med.getLastName().equals(person.getLastName()))
-                            .findFirst()
-                            .orElse(null);
-                    return new PersonDTO(person, medicalRecord);
-                })
-                .collect(Collectors.toList());
-
-        List<PersonDTO> adults = personsAtAddress.stream()
-                .filter(person -> person.getAge() > 18)
-                .map(person -> {
-                    MedicalRecord medicalRecord = medicalRecords.stream()
-                            .filter(med -> med.getFirstName().equals(person.getFirstName()) && med.getLastName().equals(person.getLastName()))
-                            .findFirst()
-                            .orElse(null);
-                    return new PersonDTO(person, medicalRecord);
-                })
-                .collect(Collectors.toList());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("children", children);
-        response.put("householdMembers", adults);
-
-        return response;
-    }
-
-    // ✅ Récupérer les emails d'une ville
+    /**
+     * Récupérer les emails d'une ville
+     */
     public Set<String> getCommunityEmails(String city) {
         return jsonDataLoader.getAllPersons().stream()
                 .filter(person -> person.getCity().equalsIgnoreCase(city))
@@ -77,7 +43,7 @@ public class PersonService {
     public Optional<Person> getPersonByName(String firstName, String lastName) {
         return jsonDataLoader.getAllPersons().stream()
                 .filter(p -> p.getFirstName().equalsIgnoreCase(firstName) && p.getLastName().equalsIgnoreCase(lastName))
-                .findFirst(); // ✅ Retourne un Optional<Person>
+                .findFirst(); // Retourne un Optional<Person>
     }
 
 
@@ -93,8 +59,8 @@ public class PersonService {
 
     public boolean updatePerson(String firstName, String lastName, Person updatedPerson) {
         Optional<Person> personOpt = getPersonByName(firstName, lastName);
-        if (personOpt.isPresent()) { // ✅ Vérifie si la personne existe
-            Person person = personOpt.get(); // ✅ Récupère l'objet Person de l'Optional
+        if (personOpt.isPresent()) { // Vérifie si la personne existe
+            Person person = personOpt.get(); // Récupère l'objet Person de l'Optional
             person.setAddress(updatedPerson.getAddress());
             person.setCity(updatedPerson.getCity());
             person.setZip(updatedPerson.getZip());
@@ -109,10 +75,6 @@ public class PersonService {
         return jsonDataLoader.getAllPersons().removeIf(
                 p -> p.getFirstName().equalsIgnoreCase(firstName) && p.getLastName().equalsIgnoreCase(lastName));
     }
-    private String convertListToString(List<String> list) {
-        return (list != null) ? String.join(", ", list) : "";
-    }
-
 
 
     public List<PersonInfoDTO> getPersonInfoByLastName(String lastName) {
@@ -125,10 +87,10 @@ public class PersonService {
                             .findFirst()
                             .orElse(null);
 
-                    // 🧮 Calcul de l'âge
+                    // Calcul de l'âge
                     int age = record != null ? calculateAge(record.getBirthdate()) : 0;
 
-                    // 🔄 Conversion des listes en chaînes de caractères
+                    // Conversion des listes en chaînes de caractères
                     String medications = record != null ? String.join(", ", record.getMedications()) : "";
                     String allergies = record != null ? String.join(", ", record.getAllergies()) : "";
 
@@ -143,7 +105,6 @@ public class PersonService {
                 })
                 .collect(Collectors.toList());
     }
-
 
 
 
@@ -164,7 +125,7 @@ public class PersonService {
 
         List<Person> persons = jsonDataLoader.getAllPersons();
         if (persons == null || persons.isEmpty()) {
-            logger.warn("⚠️ Aucune personne trouvée dans les données !");
+            logger.warn("Aucune personne trouvée dans les données !");
             return List.of();
         }
 
@@ -173,7 +134,7 @@ public class PersonService {
                 .map(person -> new PersonDTO(person, null))
                 .collect(Collectors.toList());
 
-        logger.info("✅ {} personnes trouvées et converties en PersonDTO", personDTOList.size());
+        logger.info("{} personnes trouvées et converties en PersonDTO", personDTOList.size());
         return personDTOList;
     }
 }

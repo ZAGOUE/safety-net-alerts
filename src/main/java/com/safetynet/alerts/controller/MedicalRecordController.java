@@ -22,13 +22,13 @@ public class MedicalRecordController {
 
     @GetMapping
     public ResponseEntity<List<MedicalRecord>> getAllMedicalRecords() {
-        logger.info("📥 Requête GET - Récupération de tous les dossiers médicaux.");
+        logger.info("Requête GET - Récupération de tous les dossiers médicaux.");
         return ResponseEntity.ok(medicalRecordService.getAllMedicalRecords());
     }
 
     @GetMapping("/{firstName}/{lastName}")
     public ResponseEntity<MedicalRecord> getMedicalRecordByName(@PathVariable String firstName, @PathVariable String lastName) {
-        logger.info("📥 Requête GET - Recherche du dossier médical de {} {}", firstName, lastName);
+        logger.info("Requête GET - Recherche du dossier médical de {} {}", firstName, lastName);
         Optional<MedicalRecord> record = medicalRecordService.getMedicalRecordByName(firstName, lastName);
         return record.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -36,19 +36,19 @@ public class MedicalRecordController {
 
     @PostMapping
     public ResponseEntity<String> addMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
-        logger.info("📥 Requête POST - Ajout d'un dossier médical pour {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
+        logger.info("Requête POST - Ajout d'un dossier médical pour {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
         if (medicalRecordService.addMedicalRecord(medicalRecord)) {
-            return ResponseEntity.ok("✅ Dossier médical ajouté avec succès.");
+            return ResponseEntity.ok("Dossier médical ajouté avec succès.");
         } else {
-            return ResponseEntity.badRequest().body("❌ Un dossier médical existe déjà.");
+            return ResponseEntity.badRequest().body("Un dossier médical existe déjà.");
         }
     }
 
     @DeleteMapping("/{firstName}/{lastName}")
     public ResponseEntity<String> deleteMedicalRecord(@PathVariable String firstName, @PathVariable String lastName) {
-        logger.info("📥 Requête DELETE - Suppression du dossier médical de {} {}", firstName, lastName);
+        logger.info("Requête DELETE - Suppression du dossier médical de {} {}", firstName, lastName);
         if (medicalRecordService.deleteMedicalRecord(firstName, lastName)) {
-            return ResponseEntity.ok("✅ Suppression réussie.");
+            return ResponseEntity.ok("Suppression réussie.");
         } else {
             return ResponseEntity.notFound().build();
         }

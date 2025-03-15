@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
-@NoArgsConstructor // ✅ Nécessaire pour la désérialisation JSON
+@NoArgsConstructor
 public class Person {
     private String firstName;
     private String lastName;
@@ -23,7 +23,7 @@ public class Person {
     private String email;
 
     @JsonProperty("birthdate")
-    private String birthdate; // On garde en String pour respecter le JSON
+    private String birthdate;
 
     public Person(String firstName, String lastName, String address, String city, String zip, String phone, String email, String birthdate) {
         this.firstName = firstName;
@@ -36,7 +36,9 @@ public class Person {
         this.birthdate = birthdate;
     }
 
-    // ✅ **Conversion de `birthdate` en LocalDate**
+    /**
+     * Conversion de `birthdate` en LocalDate
+     */
     @JsonIgnore
     public LocalDate getBirthdateAsLocalDate() {
         if (this.birthdate == null || this.birthdate.isEmpty()) {
@@ -47,7 +49,9 @@ public class Person {
     }
 
 
-    // ✅ **Méthode pour obtenir l'âge**
+    /**
+     * Méthode pour obtenir l'âge
+     */
     @JsonIgnore
     public int getAge() {
         LocalDate birthDate = getBirthdateAsLocalDate();

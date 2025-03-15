@@ -22,13 +22,13 @@ public class FirestationController {
 
     @GetMapping
     public ResponseEntity<List<Firestation>> getAllFirestations() {
-        logger.info("📥 Requête GET - Récupération de toutes les casernes.");
+        logger.info("Requête GET - Récupération de toutes les casernes.");
         return ResponseEntity.ok(firestationService.getAllFirestations());
     }
 
     @GetMapping("/{address}")
     public ResponseEntity<Firestation> getFirestationByAddress(@PathVariable String address) {
-        logger.info("📥 Requête GET - Recherche de la caserne pour l'adresse : {}", address);
+        logger.info("Requête GET - Recherche de la caserne pour l'adresse : {}", address);
         Optional<Firestation> firestation = Optional.ofNullable(firestationService.getFirestationByAddress(address));
         return firestation.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -37,9 +37,9 @@ public class FirestationController {
 
     @PutMapping("/{address}")
     public ResponseEntity<String> updateFirestation(@PathVariable String address, @RequestBody Firestation updatedFirestation) {
-        logger.info("📥 Requête PUT - Mise à jour de la caserne pour {}", address);
+        logger.info("Requête PUT - Mise à jour de la caserne pour {}", address);
         if (firestationService.updateFirestation(address, updatedFirestation)) {
-            return ResponseEntity.ok("✅ Mise à jour réussie.");
+            return ResponseEntity.ok("Mise à jour réussie.");
         } else {
             return ResponseEntity.notFound().build();
         }

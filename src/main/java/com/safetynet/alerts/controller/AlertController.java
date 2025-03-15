@@ -2,7 +2,7 @@ package com.safetynet.alerts.controller;
 
 
 
-import com.safetynet.alerts.dto.FireDTO;
+
 import com.safetynet.alerts.dto.PersonDTO;
 import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.service.FirestationService;
@@ -39,10 +39,10 @@ public class AlertController {
 
     @GetMapping("/childAlert")
     public ResponseEntity<Map<String, Object>> getChildrenByAddress(@RequestParam String address) {
-        logger.info("📥 Requête GET - Recherche des enfants à l'adresse : {}", address);
+        logger.info("Requête GET - Recherche des enfants à l'adresse : {}", address);
         Map<String, Object> result = firestationService.getChildrenByAddress(address);
         if (result == null || ((List<?>) result.get("children")).isEmpty()) {
-            logger.warn("⚠️ Aucun enfant trouvé à l'adresse : {}", address);
+            logger.warn("Aucun enfant trouvé à l'adresse : {}", address);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Aucun enfant trouvé à cette adresse."));
         }
         return ResponseEntity.ok(result);
@@ -51,7 +51,7 @@ public class AlertController {
 
     @GetMapping("/phoneAlert")
     public ResponseEntity<List<String>> getPhoneNumbersByStation(@RequestParam int firestation) {
-        logger.info("📥 Requête GET - Liste des numéros de téléphone pour la caserne n°{}", firestation);
+        logger.info("Requête GET - Liste des numéros de téléphone pour la caserne n°{}", firestation);
         return ResponseEntity.ok(firestationService.getPhoneNumbersByStation(firestation));
     }
 
@@ -63,24 +63,24 @@ public class AlertController {
 
     @GetMapping("/fire")
     public ResponseEntity<Map<String, Object>> getFireInfoByAddress(@RequestParam String address) {
-        logger.info("📥 Requête GET - Informations sur l'incendie à {}", address);
+        logger.info("Requête GET - Informations sur l'incendie à {}", address);
         return ResponseEntity.ok((Map<String, Object>) firestationService.getFireInfoByAddress(address));
     }
 
 
     @GetMapping("/flood/stations")
     public ResponseEntity<Map<String, List<PersonDTO>>> getFloodStations(@RequestParam List<Integer> stations) {
-        logger.info("📥 Requête GET - Inondation pour stations: {}", stations);
+        logger.info("Requête GET - Inondation pour stations: {}", stations);
         return ResponseEntity.ok(firestationService.getFloodStations(stations));
     }
 
 
     @GetMapping("/personInfo")
     public ResponseEntity<List<PersonInfoDTO>> getPersonInfoByLastName(@RequestParam String lastName) {
-        logger.info("📥 Requête GET - Recherche d'informations pour {}", lastName);
+        logger.info("Requête GET - Recherche d'informations pour {}", lastName);
         List<PersonInfoDTO> result = personService.getPersonInfoByLastName(lastName);
         if (result.isEmpty()) {
-            logger.warn("⚠️ Aucun résident trouvé avec le nom {}", lastName);
+            logger.warn("Aucun résident trouvé avec le nom {}", lastName);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         return ResponseEntity.ok(result);

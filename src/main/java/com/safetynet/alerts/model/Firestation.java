@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor  // ✅ Constructeur vide requis par Jackson
-@AllArgsConstructor // ✅ Constructeur avec paramètres pour les tests
+@NoArgsConstructor
+@AllArgsConstructor
 public class Firestation {
     private String address;
     private int station;

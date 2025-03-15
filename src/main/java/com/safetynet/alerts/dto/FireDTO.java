@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-// Utilisé pour /fire?address=<address>
+
 @Getter
 @Setter
 @AllArgsConstructor

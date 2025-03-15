@@ -1,8 +1,6 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.FireDTO;
-import com.safetynet.alerts.dto.FirestationCoverageDTO;
-import com.safetynet.alerts.dto.PersonBasicDTO;
 import com.safetynet.alerts.dto.PersonDTO;
 import com.safetynet.alerts.model.Firestation;
 import com.safetynet.alerts.model.MedicalRecord;
@@ -41,7 +39,7 @@ public class FirestationService {
         return false;
     }
     /**
-     * ✅ Ajoute une nouvelle caserne.
+     * Ajoute une nouvelle caserne.
      */
     public boolean addFirestation(Firestation firestation) {
         List<Firestation> stations = jsonDataLoader.getAllFirestations();
@@ -53,14 +51,14 @@ public class FirestationService {
         return true;
     }
     /**
-     * 🛑 Supprime une caserne par son adresse.
+     * Supprime une caserne par son adresse.
      */
     public boolean deleteFirestation(String address) {
         List<Firestation> stations = jsonDataLoader.getAllFirestations();
         return stations.removeIf(fs -> fs.getAddress().equalsIgnoreCase(address));
     }
 
-    // ✅ Récupérer les personnes couvertes par une caserne
+    // Récupérer les personnes couvertes par une caserne
     public Map<String, Object> getPersonsByStation(int stationNumber) {
         List<Person> persons = jsonDataLoader.getAllPersons().stream()
                 .filter(p -> jsonDataLoader.getAllFirestations().stream()
@@ -82,7 +80,7 @@ public class FirestationService {
                         .filter(med -> med.getFirstName().equals(person.getFirstName()) &&
                                 med.getLastName().equals(person.getLastName()))
                         .findFirst()
-                        .map(MedicalRecord::getAge)  // 🔥 Récupère l'âge
+                        .map(MedicalRecord::getAge)  // Récupère l'âge
                         .orElse(0)) // Si non trouvé, âge = 0 (sécurisation)
                 .filter(age -> age > 18)
                 .count();
@@ -98,9 +96,9 @@ public class FirestationService {
     }
 
 
-
-
-    // ✅ Récupérer les numéros de téléphone des résidents couverts par une caserne
+    /**
+     * Récupérer les numéros de téléphone des résidents couverts par une caserne
+     */
     public List<String> getPhoneNumbersByStation(int stationNumber) {
         return jsonDataLoader.getAllPersons().stream()
                 .filter(person -> jsonDataLoader.getAllFirestations().stream()
@@ -111,32 +109,9 @@ public class FirestationService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ Récupérer les habitants d'une adresse et leur caserne associée
-    public Map<String, Object> getFireDetails(String address) {
-        List<Person> residents = jsonDataLoader.getAllPersons().stream()
-                .filter(person -> person.getAddress().equalsIgnoreCase(address))
-                .toList();
-
-        Optional<Firestation> firestation = jsonDataLoader.getAllFirestations().stream()
-                .filter(f -> f.getAddress().equalsIgnoreCase(address))
-                .findFirst();
-
-        List<PersonDTO> residentDetails = residents.stream()
-                .map(person -> {
-                    MedicalRecord medicalRecord = jsonDataLoader.getAllMedicalRecords().stream()
-                            .filter(med -> med.getFirstName().equals(person.getFirstName()) && med.getLastName().equals(person.getLastName()))
-                            .findFirst()
-                            .orElse(null);
-                    return new PersonDTO(person, medicalRecord);
-                })
-                .collect(Collectors.toList());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("stationNumber", firestation.map(Firestation::getStation).orElse(null));
-        response.put("residents", residentDetails);
-
-        return response;
-    }
+   /**
+    Récupérer les habitants d'une adresse et leur caserne associée
+    **/
 
    // Récupérer les adresses d'une caserne
     public Firestation getFirestationByAddress(String address) {
@@ -170,7 +145,7 @@ public class FirestationService {
         return result;
     }
     /**
-     * 🔍 Trouve une caserne par son adresse.
+     * Trouve une caserne par son adresse.
      */
     public Firestation findByAddress(String address) {
         return jsonDataLoader.getAllFirestations().stream()
@@ -180,7 +155,9 @@ public class FirestationService {
     }
 
 
-    // Recherche les informations des habitants et leurs antécédents médicaux
+    /**
+     * Recherche les informations des habitants et leurs antécédents médicaux
+     */
     public FireDTO getFireInfoByAddress(String address) {
         // Filtrer les personnes par adresse
         List<Person> persons = jsonDataLoader.getAllPersons().stream()
@@ -214,7 +191,9 @@ public class FirestationService {
     }
 
 
-
+    /**
+     * Recherche les informations des enfants et leurs antécédents médicaux
+     */
 
     public Map<String, Object> getChildrenByAddress(String address) {
         List<Person> residents = jsonDataLoader.getAllPersons().stream()

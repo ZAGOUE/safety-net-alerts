@@ -18,7 +18,7 @@ public class PersonInfoDTO {
     private String medications;
     private String allergies;
 
-    // 🔹 Constructeur attendu
+    // 🔹 Constructeur
 
 
     public PersonInfoDTO(String lastName, String address, String email, int age, String medications, String allergies) {

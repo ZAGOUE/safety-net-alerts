@@ -28,15 +28,15 @@ class FirestationServiceTest {
         Firestation newStation = new Firestation("123 New St", 10);
         boolean result = firestationService.addFirestation(newStation);
 
-        assertTrue(result, "⚠️ L'ajout de la caserne aurait dû réussir !");
+        assertTrue(result, "L'ajout de la caserne aurait dû réussir !");
         List<Firestation> stations = firestationService.getAllFirestations();
-        assertTrue(stations.contains(newStation), "⚠️ La caserne ajoutée est introuvable !");
+        assertTrue(stations.contains(newStation), "La caserne ajoutée est introuvable !");
     }
     @Test
     void testDeleteFirestation_Success() {
         boolean result = firestationService.deleteFirestation("1509 Culver St");
-        assertTrue(result, "⚠️ La suppression aurait dû réussir !");
+        assertTrue(result, "La suppression aurait dû réussir !");
         Firestation station = firestationService.findByAddress("1509 Culver St");
-        assertNull(station, "⚠️ La caserne supprimée est toujours présente !");
+        assertNull(station, "La caserne supprimée est toujours présente !");
     }
 }
