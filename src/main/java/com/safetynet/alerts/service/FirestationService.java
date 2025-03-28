@@ -81,7 +81,7 @@ public class FirestationService {
                                 med.getLastName().equals(person.getLastName()))
                         .findFirst()
                         .map(MedicalRecord::getAge)  // Récupère l'âge
-                        .orElse(0)) // Si non trouvé, âge = 0 (sécurisation)
+                        .orElse(0)) // Si non trouvé, âge = 0
                 .filter(age -> age > 18)
                 .count();
 
@@ -124,7 +124,7 @@ public class FirestationService {
 
         for (Integer station : stations) {
             List<String> addresses = jsonDataLoader.getAllFirestations().stream()
-                    .filter(fs -> fs.getStation() == station) // Correction ici
+                    .filter(fs -> fs.getStation() == station)
                     .map(Firestation::getAddress)
                     .toList();
 

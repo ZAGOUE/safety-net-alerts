@@ -54,9 +54,9 @@ public class MedicalRecordService {
             recordToUpdate.setBirthdate(updatedRecord.getBirthdate());
             recordToUpdate.setMedications(updatedRecord.getMedications());
             recordToUpdate.setAllergies(updatedRecord.getAllergies());
-            return true; // Mise à jour réussie
+            return true;
         }
-        return false; // Dossier médical non trouvé
+        return false;
     }
 
     public boolean deleteMedicalRecord(String firstName, String lastName) {

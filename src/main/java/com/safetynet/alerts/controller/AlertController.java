@@ -3,6 +3,7 @@ package com.safetynet.alerts.controller;
 
 
 
+import com.safetynet.alerts.dto.FireDTO;
 import com.safetynet.alerts.dto.PersonDTO;
 import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.service.FirestationService;
@@ -62,10 +63,11 @@ public class AlertController {
     }
 
     @GetMapping("/fire")
-    public ResponseEntity<Map<String, Object>> getFireInfoByAddress(@RequestParam String address) {
+    public ResponseEntity<FireDTO> getFireInfoByAddress(@RequestParam String address) {
         logger.info("Requête GET - Informations sur l'incendie à {}", address);
-        return ResponseEntity.ok((Map<String, Object>) firestationService.getFireInfoByAddress(address));
+        return ResponseEntity.ok(firestationService.getFireInfoByAddress(address)); // Retourne un `FireDTO`
     }
+
 
 
     @GetMapping("/flood/stations")

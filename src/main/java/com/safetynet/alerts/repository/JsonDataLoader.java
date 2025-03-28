@@ -7,6 +7,7 @@ import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.Firestation;
 import com.safetynet.alerts.model.MedicalRecord;
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.io.InputStream;
@@ -19,7 +20,7 @@ public class JsonDataLoader {
 
     public JsonDataLoader() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Ajout du support des LocalDate
+        objectMapper.registerModule(new JavaTimeModule());
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data.json")) {
             if (inputStream == null) {
                 throw new RuntimeException("ERREUR : Impossible de charger le fichier data.json !");

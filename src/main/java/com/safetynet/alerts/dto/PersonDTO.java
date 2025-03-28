@@ -8,7 +8,9 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Ce DTO servira pour les personnes avec des paramètres
@@ -35,7 +37,7 @@ public class PersonDTO {
         } else {
             this.medications = List.of();
             this.allergies = List.of();
-            this.age = -1; // Valeur par défaut en cas de problème
+            this.age = -1;
         }
     }
 
@@ -43,8 +45,22 @@ public class PersonDTO {
         if (birthdate == null || birthdate.isEmpty()) {
             return -1;
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDate birthDate = LocalDate.parse(birthdate, formatter);
+
+        LocalDate birthDate;
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH);
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
+
+        try {
+            birthDate = LocalDate.parse(birthdate, formatter1); // Essai avec MM/dd/yyyy
+        } catch (DateTimeParseException e1) {
+            try {
+                birthDate = LocalDate.parse(birthdate, formatter2); // Essai avec yyyy-MM-dd
+            } catch (DateTimeParseException e2) {
+                throw new IllegalArgumentException("Format de date non pris en charge : " + birthdate);
+            }
+        }
+
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 }
+

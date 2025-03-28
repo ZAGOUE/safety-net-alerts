@@ -25,7 +25,7 @@ class PersonServiceTest {
 
     @Test
     void testAddPerson() {
-        Person newPerson = new Person("Jane", "Doe", "150 Main St", "Culver", "12345", "555-1234", "jane.doe@example.com","03/06/1984");
+        Person newPerson = new Person("Jane", "Doe", "150 Main St", "Culver", "12345", "555-1234", "jane.doe@example.com", "03/06/1984");
         boolean added = personService.addPerson(newPerson);
         logger.info("Test ajout : {}", added ? "SUCCÈS" : "ÉCHEC");
         assertTrue(added);
@@ -33,7 +33,7 @@ class PersonServiceTest {
 
     @Test
     void testAddPersonAlreadyExists() {
-        Person existingPerson = new Person("John", "Boyd", "1509 Culver St", "Culver", "97451", "841-874-6512", "john.boyd@example.com","03/06/1984");
+        Person existingPerson = new Person("John", "Boyd", "1509 Culver St", "Culver", "97451", "841-874-6512", "john.boyd@example.com", "03/06/1984");
         boolean added = personService.addPerson(existingPerson);
         logger.info("Test ajout d'une personne existante : {}", added ? "ÉCHEC" : "SUCCÈS");
         assertFalse(added);

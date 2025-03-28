@@ -60,7 +60,7 @@ public class PersonService {
     public boolean updatePerson(String firstName, String lastName, Person updatedPerson) {
         Optional<Person> personOpt = getPersonByName(firstName, lastName);
         if (personOpt.isPresent()) { // Vérifie si la personne existe
-            Person person = personOpt.get(); // Récupère l'objet Person de l'Optional
+            Person person = personOpt.get();
             person.setAddress(updatedPerson.getAddress());
             person.setCity(updatedPerson.getCity());
             person.setZip(updatedPerson.getZip());
@@ -95,6 +95,7 @@ public class PersonService {
                     String allergies = record != null ? String.join(", ", record.getAllergies()) : "";
 
                     return new PersonInfoDTO(
+                            person.getFirstName(),
                             person.getLastName(),
                             person.getAddress(),
                             person.getEmail(),
