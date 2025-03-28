@@ -56,6 +56,8 @@ public class MedicalRecordService {
             recordToUpdate.setAllergies(updatedRecord.getAllergies());
             return true;
         }
+        logger.warn("Dossier médical à mettre à jour introuvable : {} {}", firstName, lastName);
+
         return false;
     }
 

@@ -48,6 +48,8 @@ public class FirestationService {
             return false;
         }
         stations.add(firestation);
+        logger.info("Ajout d'une nouvelle caserne : {}", firestation);
+
         return true;
     }
     /**
@@ -55,11 +57,14 @@ public class FirestationService {
      */
     public boolean deleteFirestation(String address) {
         List<Firestation> stations = jsonDataLoader.getAllFirestations();
+        logger.info("Suppression de la caserne à l'adresse : {}", address);
         return stations.removeIf(fs -> fs.getAddress().equalsIgnoreCase(address));
     }
 
     // Récupérer les personnes couvertes par une caserne
     public Map<String, Object> getPersonsByStation(int stationNumber) {
+        logger.info("Recherche des personnes couvertes par la caserne n°{}", stationNumber);
+
         List<Person> persons = jsonDataLoader.getAllPersons().stream()
                 .filter(p -> jsonDataLoader.getAllFirestations().stream()
                         .anyMatch(fs -> fs.getStation() == stationNumber && fs.getAddress().equalsIgnoreCase(p.getAddress())))
@@ -100,6 +105,8 @@ public class FirestationService {
      * Récupérer les numéros de téléphone des résidents couverts par une caserne
      */
     public List<String> getPhoneNumbersByStation(int stationNumber) {
+        logger.info("Récupération des numéros de téléphone pour la caserne n°{}", stationNumber);
+
         return jsonDataLoader.getAllPersons().stream()
                 .filter(person -> jsonDataLoader.getAllFirestations().stream()
                         .anyMatch(firestation -> firestation.getStation() == stationNumber
@@ -141,6 +148,8 @@ public class FirestationService {
                         .toList();
                 result.put(address, residents);
             }
+            logger.info("Récupération des foyers pour les casernes : {}", stations);
+
         }
         return result;
     }
@@ -165,6 +174,7 @@ public class FirestationService {
                 .toList();
 
         if (persons.isEmpty()) {
+            logger.warn("Aucun habitant trouvé à l'adresse : {}", address);
             throw new IllegalArgumentException("Aucun habitant trouvé à cette adresse.");
         }
 
@@ -184,9 +194,15 @@ public class FirestationService {
                 .filter(fs -> fs.getAddress().equalsIgnoreCase(address))
                 .map(Firestation::getStation)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Aucune caserne trouvée pour cette adresse."));
+                .orElseThrow(() -> {
+                    logger.warn("Aucune caserne trouvée pour l'adresse : {}", address);
+                    return new IllegalArgumentException("Aucune caserne trouvée pour cette adresse.");
+                });
+
 
         // Retourner un FireDTO
+        logger.info("Informations récupérées pour l'adresse : {}", address);
+
         return new FireDTO(residents, stationNumber);
     }
 
@@ -196,11 +212,14 @@ public class FirestationService {
      */
 
     public Map<String, Object> getChildrenByAddress(String address) {
+        logger.info("Recherche des enfants à l'adresse : {}", address);
+
         List<Person> residents = jsonDataLoader.getAllPersons().stream()
                 .filter(person -> person.getAddress().equalsIgnoreCase(address))
                 .toList();
 
         if (residents.isEmpty()) {
+            logger.warn("Aucun résident trouvé à l'adresse : {}", address);
             return Map.of("message", "Aucun résident trouvé à cette adresse.");
         }
 

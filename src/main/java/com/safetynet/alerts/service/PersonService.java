@@ -33,10 +33,12 @@ public class PersonService {
      * Récupérer les emails d'une ville
      */
     public Set<String> getCommunityEmails(String city) {
+        logger.debug("Récupération des emails pour la ville : {}", city);
         return jsonDataLoader.getAllPersons().stream()
                 .filter(person -> person.getCity().equalsIgnoreCase(city))
                 .map(Person::getEmail)
                 .collect(Collectors.toSet());
+
     }
 
 
@@ -52,8 +54,12 @@ public class PersonService {
         if (persons.stream().noneMatch(p -> p.getFirstName().equalsIgnoreCase(person.getFirstName()) &&
                 p.getLastName().equalsIgnoreCase(person.getLastName()))) {
             persons.add(person);
+            logger.info("Ajout d'une nouvelle personne : {} {}", person.getFirstName(), person.getLastName());
+
             return true;
         }
+        logger.warn("Ajout échoué : la personne {} {} existe déjà", person.getFirstName(), person.getLastName());
+
         return false;
     }
 
@@ -66,19 +72,32 @@ public class PersonService {
             person.setZip(updatedPerson.getZip());
             person.setPhone(updatedPerson.getPhone());
             person.setEmail(updatedPerson.getEmail());
+            logger.info("Mise à jour réussie pour : {} {}", firstName, lastName);
+
             return true;
         }
+        logger.warn("Mise à jour échouée : personne non trouvée - {} {}", firstName, lastName);
+
         return false;
     }
 
     public boolean deletePerson(String firstName, String lastName) {
-        return jsonDataLoader.getAllPersons().removeIf(
+
+       boolean removed = jsonDataLoader.getAllPersons().removeIf(
                 p -> p.getFirstName().equalsIgnoreCase(firstName) && p.getLastName().equalsIgnoreCase(lastName));
+        if (removed) {
+            logger.info("Suppression réussie de la personne : {} {}", firstName, lastName);
+        } else {
+            logger.warn("Suppression échouée : personne introuvable - {} {}", firstName, lastName);
+        }
+        return removed;
+
     }
 
-
     public List<PersonInfoDTO> getPersonInfoByLastName(String lastName) {
-        return jsonDataLoader.getAllPersons().stream()
+        logger.info("Recherche des informations pour les personnes avec le nom : {}", lastName);
+
+        List<PersonInfoDTO> results = jsonDataLoader.getAllPersons().stream()
                 .filter(person -> person.getLastName().equalsIgnoreCase(lastName))
                 .map(person -> {
                     MedicalRecord record = jsonDataLoader.getAllMedicalRecords().stream()
@@ -105,6 +124,9 @@ public class PersonService {
                     );
                 })
                 .collect(Collectors.toList());
+        logger.info("{} personne(s) trouvée(s) avec le nom de famille '{}'", results.size(), lastName);
+        return results;
+
     }
 
 
