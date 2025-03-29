@@ -41,12 +41,22 @@ public class PersonService {
 
     }
 
+    /**
+     * Recherche une personne par ses nom et prénom
+     *
+     */
+
 
     public Optional<Person> getPersonByName(String firstName, String lastName) {
         return jsonDataLoader.getAllPersons().stream()
                 .filter(p -> p.getFirstName().equalsIgnoreCase(firstName) && p.getLastName().equalsIgnoreCase(lastName))
                 .findFirst(); // Retourne un Optional<Person>
     }
+
+    /**
+     * Ajoute une nouvelle personne
+     *
+     */
 
 
     public boolean addPerson(Person person) {
@@ -62,6 +72,11 @@ public class PersonService {
 
         return false;
     }
+
+    /**
+     * Mise à jour des informations liées à une personne
+     *
+     */
 
     public boolean updatePerson(String firstName, String lastName, Person updatedPerson) {
         Optional<Person> personOpt = getPersonByName(firstName, lastName);
@@ -81,6 +96,11 @@ public class PersonService {
         return false;
     }
 
+    /**
+     * Supprime une personne par ses nom et prénom
+     *
+     */
+
     public boolean deletePerson(String firstName, String lastName) {
 
        boolean removed = jsonDataLoader.getAllPersons().removeIf(
@@ -93,6 +113,13 @@ public class PersonService {
         return removed;
 
     }
+    /**
+     * Récupère les informations complètes (adresse, email, âge, antécédents médicaux)
+     * de toutes les personnes portant le même nom de famille.
+     *
+     * @param lastName Le nom de famille à rechercher.
+     * @return Une liste de PersonInfoDTO contenant les détails des personnes.
+     */
 
     public List<PersonInfoDTO> getPersonInfoByLastName(String lastName) {
         logger.info("Recherche des informations pour les personnes avec le nom : {}", lastName);
@@ -129,7 +156,11 @@ public class PersonService {
 
     }
 
-
+    /**
+     * Calcul l'age à partir de la date de naissance
+     * @param birthdate date de naissance
+     * @return la période entre la date de naissance et la date du jour
+     */
 
     private int calculateAge(String birthdate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");

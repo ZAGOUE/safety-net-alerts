@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-// Utilisé pour /firestation?stationNumber=<station_number>
+
 @Getter
 @Setter
 @NoArgsConstructor

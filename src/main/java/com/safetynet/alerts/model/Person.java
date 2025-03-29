@@ -42,7 +42,7 @@ public class Person {
     @JsonIgnore
     public LocalDate getBirthdateAsLocalDate() {
         if (this.birthdate == null || this.birthdate.isEmpty()) {
-            return null; // Retourne null si la date de naissance est absente
+            return null;
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         return LocalDate.parse(this.birthdate, formatter);
@@ -51,12 +51,13 @@ public class Person {
 
     /**
      * Méthode pour obtenir l'âge
+     * @return -1 si la date est invalide
      */
     @JsonIgnore
     public int getAge() {
         LocalDate birthDate = getBirthdateAsLocalDate();
         if (birthDate == null) {
-            return -1; // Retourne -1 si la date de naissance est inconnue
+            return -1;
         }
         return Period.between(birthDate, LocalDate.now()).getYears();
     }

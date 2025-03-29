@@ -19,10 +19,20 @@ public class MedicalRecordService {
         logger.info("Chargement des dossiers médicaux terminé.");
     }
 
+    /**
+     * Récupération de tous les dossiers médicaux.
+     *
+     */
+
     public List<MedicalRecord> getAllMedicalRecords() {
         logger.debug("Récupération de tous les dossiers médicaux.");
         return medicalRecords;
     }
+
+    /**
+     * Recherche du dossier médical por le nom de famille
+     *
+     */
 
     public Optional<MedicalRecord> getMedicalRecordByName(String firstName, String lastName) {
         logger.debug("Recherche du dossier médical pour : {} {}", firstName, lastName);

@@ -91,20 +91,18 @@ class AlertControllerTest {
 
     @Test
     void testGetFireInfoByAddress() throws Exception {
-        // Création d'un `PersonDTO` valide
+        // Création d'un `PersonDTO`
         Person person = new Person("John", "Doe", "456 Street", "City", "12345", "123456789", "email@example.com", "01/01/1990");
         MedicalRecord medicalRecord = new MedicalRecord("John", "Doe", "01/01/1990", List.of("med1"), List.of("allergy1"));
         PersonDTO personDTO = new PersonDTO(person, medicalRecord);
 
         FireDTO fireDTO = new FireDTO(
-                List.of(personDTO), // Liste des résidents
-                2 // Numéro de la caserne associée
+                List.of(personDTO),
+                2
         );
 
-        // Retourner un "FireDTO"
         when(firestationService.getFireInfoByAddress("456 Street")).thenReturn(fireDTO);
 
-        // Exécution du test avec MockMvc et vérification de la réponse
         mockMvc.perform(get("/alert/fire?address=456 Street"))
                 .andExpect(status().isOk()) // status 200
                 .andExpect(jsonPath("$.residents[0].firstName").value("John"))
@@ -115,20 +113,20 @@ class AlertControllerTest {
 
     @Test
     void testGetFloodStations() throws Exception {
-        // Création d'un `Person` valide
+        // Création d'une `Person`
         Person person = new Person("John", "Doe", "123 Street", "City", "12345", "123456789", "email@example.com", "01/01/1990");
 
-        // Création d'un `MedicalRecord` valide
+        // Création d'un `MedicalRecord`
         MedicalRecord medicalRecord = new MedicalRecord("John", "Doe", "01/01/1990", List.of("med1"), List.of("allergy1"));
 
-        // Création d'un `PersonDTO`
+
         PersonDTO personDTO = new PersonDTO(person, medicalRecord);
 
-        // Simuler le retour de `firestationService.getFloodStations(...)`
+
         when(firestationService.getFloodStations(List.of(1, 2)))
                 .thenReturn(Map.of("123 Street", List.of(personDTO)));
 
-        // Exécution du test MockMvc et vérification de la réponse
+
         mockMvc.perform(get("/alert/flood/stations?stations=1,2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.['123 Street'][0].firstName").value("John"))
@@ -138,15 +136,15 @@ class AlertControllerTest {
 
     @Test
     void testGetPersonInfoByLastName() throws Exception {
-        // Création d'un `Person` simulé
+
         Person person = new Person("John", "Doe", "123 Street", "City", "12345", "123456789", "email@example.com", "01/01/1990");
 
-        // Création d'un `MedicalRecord` simulé
+
         MedicalRecord medicalRecord = new MedicalRecord("John", "Doe", "01/01/1990",
                 List.of("med1", "med2"),
                 List.of("allergy1", "allergy2"));
 
-        // Création d'un `PersonInfoDTO` avec les données médicales
+
         PersonInfoDTO personInfoDTO = new PersonInfoDTO(
                 "John",
                 "Doe",
@@ -157,10 +155,10 @@ class AlertControllerTest {
                 "allergy1, allergy2"
         );
 
-        // Simulation de `personService.getPersonInfoByLastName("Doe")`
+
         when(personService.getPersonInfoByLastName("Doe")).thenReturn(List.of(personInfoDTO));
 
-        // Exécution du test avec `MockMvc` et vérification des résultats
+
         mockMvc.perform(get("/alert/personInfo?lastName=Doe"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].firstName").value("John"))

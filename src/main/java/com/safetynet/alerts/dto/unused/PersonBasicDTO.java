@@ -3,7 +3,7 @@ package com.safetynet.alerts.dto.unused;
 import lombok.Getter;
 import lombok.Setter;
 
-// Ce DTO servira pour les requêtes où on n’a pas besoin des données médicales.
+// Ce DTO servira pour les requêtes qui n'ont n’a pas besoin des données médicales.
 @Getter
 @Setter
 public class PersonBasicDTO {
@@ -12,7 +12,7 @@ public class PersonBasicDTO {
     private String address;
     private String phone;
 
-    // ✅ Constructeur simple
+
     public PersonBasicDTO(String firstName, String lastName, String address, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;

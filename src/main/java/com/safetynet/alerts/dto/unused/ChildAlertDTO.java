@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-// Utilisé pour /childAlert?address=<address>
+// Utilisé pour /childAlert
 @Getter
 @Setter
 @NoArgsConstructor

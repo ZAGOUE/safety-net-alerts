@@ -4,6 +4,8 @@ import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.JsonDataLoader;
 import org.junit.jupiter.api.Test;
 import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MedicalRecordServiceTest {
@@ -36,5 +38,37 @@ class MedicalRecordServiceTest {
     void testDeleteMedicalRecord() {
         assertTrue(medicalRecordService.deleteMedicalRecord("John", "Boyd"));
     }
+
+    @Test
+    void testGetMedicalRecordByName_found() {
+        Optional<MedicalRecord> result = medicalRecordService.getMedicalRecordByName("John", "Boyd");
+        assertTrue(result.isPresent());
+        assertEquals("John", result.get().getFirstName());
+    }
+
+    @Test
+    void testGetMedicalRecordByName_notFound() {
+        Optional<MedicalRecord> result = medicalRecordService.getMedicalRecordByName("Fake", "User");
+        assertFalse(result.isPresent());
+    }
+    @Test
+    void testAddMedicalRecord_duplicate() {
+        MedicalRecord existingRecord = new MedicalRecord("John", "Boyd", "03/06/1984",
+                List.of("med1:500mg"),
+                List.of("pollen"));
+        boolean result = medicalRecordService.addMedicalRecord(existingRecord);
+        assertFalse(result);
+    }
+    @Test
+    void testUpdateMedicalRecord_notFound() {
+        MedicalRecord updated = new MedicalRecord("Ghost", "User", "01/01/2000", List.of(), List.of());
+        boolean result = medicalRecordService.updateMedicalRecord("Ghost", "User", updated);
+        assertFalse(result);
+    }
+
+
+
 }
+
+
 

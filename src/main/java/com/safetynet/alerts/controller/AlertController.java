@@ -72,7 +72,7 @@ public class AlertController {
 
     @GetMapping("/flood/stations")
     public ResponseEntity<Map<String, List<PersonDTO>>> getFloodStations(@RequestParam List<Integer> stations) {
-        logger.info("Requête GET - Inondation pour stations: {}", stations);
+        logger.info("Requête GET - caserne en alerte: {}", stations);
         return ResponseEntity.ok(firestationService.getFloodStations(stations));
     }
 

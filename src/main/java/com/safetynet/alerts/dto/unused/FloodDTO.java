@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-// Utilisé pour flood/stations?stations=1,2,3
+// Utilisé pour flood/ stations=1,2,3
 @Getter
 @Setter
 public class FloodDTO {

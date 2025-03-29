@@ -25,7 +25,12 @@ public class FirestationService {
     public List<Firestation> getAllFirestations() {
         return jsonDataLoader.getAllFirestations();
     }
-   // Mettre à jour les informations de la caserne
+
+    /**
+     * Mettre à jour les informations de la caserne
+     *
+     */
+
     public  boolean updateFirestation(String address, Firestation updateFirestation) {
         List<Firestation> firestations = jsonDataLoader.getAllFirestations();
         for (Firestation firestation : firestations) {
@@ -43,7 +48,7 @@ public class FirestationService {
      */
     public boolean addFirestation(Firestation firestation) {
         List<Firestation> stations = jsonDataLoader.getAllFirestations();
-        // Vérifie si l'adresse existe déjà
+
         if (stations.stream().anyMatch(fs -> fs.getAddress().equalsIgnoreCase(firestation.getAddress()))) {
             return false;
         }
@@ -61,7 +66,12 @@ public class FirestationService {
         return stations.removeIf(fs -> fs.getAddress().equalsIgnoreCase(address));
     }
 
-    // Récupérer les personnes couvertes par une caserne
+    /**
+     * Récupérer les personnes couvertes par une caserne
+     * @return une liste de personne
+     */
+
+    //
     public Map<String, Object> getPersonsByStation(int stationNumber) {
         logger.info("Recherche des personnes couvertes par la caserne n°{}", stationNumber);
 
@@ -100,10 +110,10 @@ public class FirestationService {
         return result;
     }
 
-
     /**
      * Récupérer les numéros de téléphone des résidents couverts par une caserne
      */
+
     public List<String> getPhoneNumbersByStation(int stationNumber) {
         logger.info("Récupération des numéros de téléphone pour la caserne n°{}", stationNumber);
 
@@ -120,7 +130,7 @@ public class FirestationService {
     Récupérer les habitants d'une adresse et leur caserne associée
     **/
 
-   // Récupérer les adresses d'une caserne
+
     public Firestation getFirestationByAddress(String address) {
         return jsonDataLoader.getAllFirestations().stream()
                 .filter(firestation -> firestation.getAddress().equalsIgnoreCase(address))
@@ -166,9 +176,10 @@ public class FirestationService {
 
     /**
      * Recherche les informations des habitants et leurs antécédents médicaux
+     * @return PersonDTO rt FireDTO
      */
     public FireDTO getFireInfoByAddress(String address) {
-        // Filtrer les personnes par adresse
+
         List<Person> persons = jsonDataLoader.getAllPersons().stream()
                 .filter(p -> p.getAddress().equalsIgnoreCase(address))
                 .toList();
@@ -178,7 +189,7 @@ public class FirestationService {
             throw new IllegalArgumentException("Aucun habitant trouvé à cette adresse.");
         }
 
-        // Mapper chaque personne en PersonDTO
+
         List<PersonDTO> residents = persons.stream()
                 .map(person -> {
                     MedicalRecord record = jsonDataLoader.getAllMedicalRecords().stream()
@@ -189,7 +200,7 @@ public class FirestationService {
                 })
                 .toList();
 
-        // Récupérer le numéro de la station
+
         int stationNumber = jsonDataLoader.getAllFirestations().stream()
                 .filter(fs -> fs.getAddress().equalsIgnoreCase(address))
                 .map(Firestation::getStation)
@@ -200,7 +211,7 @@ public class FirestationService {
                 });
 
 
-        // Retourner un FireDTO
+
         logger.info("Informations récupérées pour l'adresse : {}", address);
 
         return new FireDTO(residents, stationNumber);

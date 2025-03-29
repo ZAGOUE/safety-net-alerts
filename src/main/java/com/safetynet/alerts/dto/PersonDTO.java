@@ -51,10 +51,10 @@ public class PersonDTO {
         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
 
         try {
-            birthDate = LocalDate.parse(birthdate, formatter1); // Essai avec MM/dd/yyyy
+            birthDate = LocalDate.parse(birthdate, formatter1);
         } catch (DateTimeParseException e1) {
             try {
-                birthDate = LocalDate.parse(birthdate, formatter2); // Essai avec yyyy-MM-dd
+                birthDate = LocalDate.parse(birthdate, formatter2);
             } catch (DateTimeParseException e2) {
                 throw new IllegalArgumentException("Format de date non pris en charge : " + birthdate);
             }

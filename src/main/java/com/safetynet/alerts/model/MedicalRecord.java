@@ -17,7 +17,7 @@ public class MedicalRecord {
     private String firstName;
     private String lastName;
 
-    @JsonProperty("birthdate") // Pour bien mapper la clé JSON
+    @JsonProperty("birthdate")
     private String birthdate;
 
     private List<String> medications;
@@ -51,11 +51,12 @@ public class MedicalRecord {
 
     /**
      * Méthode pour calculer l'âge
+     * @return -1 si la date est invalide
      */
     public int getAge() {
         LocalDate birthDate = getBirthdateAsLocalDate();
         if (birthDate == null) {
-            return -1; // Retourne -1 si la date est invalide
+            return -1;
         }
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
