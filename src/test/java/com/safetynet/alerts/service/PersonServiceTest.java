@@ -1,6 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.PersonDTO;
+import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.JsonDataLoader;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -93,5 +95,24 @@ class PersonServiceTest {
         // Vérification de la cohérence des données
         assertEquals(persons.size(), personService.getAllPersons().size());
     }
+    @Test
+    void testGetPersonInfoByLastName() {
+        List<PersonInfoDTO> infos = personService.getPersonInfoByLastName("Boyd");
+        assertFalse(infos.isEmpty());
+        assertEquals("Boyd", infos.get(0).getLastName());
+    }
+    @Test
+    void testGetCommunityEmails() {
+        Set<String> emails = personService.getCommunityEmails("Culver");
+        assertNotNull(emails);
+        assertTrue(emails.contains("jaboyd@email.com")); // adapte selon ton data.json
+    }
+    @Test
+    void testCalculateAge() {
+        int age = personService.calculateAge("01/01/2000");
+        assertTrue(age > 0); // ou assertEquals(25, age) selon la date du jour
+    }
+
+
 
 }

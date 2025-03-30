@@ -9,5 +9,10 @@ class SafetyBackApplicationTests {
 	@Test
 	void contextLoads() {
 	}
+	@Test
+	void testMainMethod() {
+		SafetyBackApplication.main(new String[] {});
+	}
+
 
 }

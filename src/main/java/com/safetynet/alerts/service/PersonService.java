@@ -162,7 +162,7 @@ public class PersonService {
      * @return la période entre la date de naissance et la date du jour
      */
 
-    private int calculateAge(String birthdate) {
+    public int calculateAge(String birthdate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDate birthDate = LocalDate.parse(birthdate, formatter);
         return Period.between(birthDate, LocalDate.now()).getYears();
