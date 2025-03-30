@@ -20,7 +20,7 @@ public class ModelTest {
         assertEquals("john@example.com", person.getEmail());
         assertEquals("01/01/1990", person.getBirthdate());
 
-        // Setters (si Lombok ou pas de constructeur par défaut)
+
         Person p = new Person();
         p.setFirstName("Alice");
         p.setLastName("Smith");
@@ -67,7 +67,7 @@ public class ModelTest {
     void testGetAge() {
         Person person = new Person("John", "Doe", "123 Main St", "City", "12345", "123-4567", "john@example.com", "01/01/2000");
         int age = person.getAge();
-        assertTrue(age > 0); // ou assertEquals(expectedAge, age) si tu veux tester une valeur précise
+        assertTrue(age > 0);
     }
 
     @Test

@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.2</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.safetynet</groupId>
 	<artifactId>safety-back</artifactId>
@@ -126,7 +126,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.1.2</version>
 				<configuration>
-				<!--	<argLine>-javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.jar"</argLine> -->
+
 					<includes>
 						<include>**/Test*.java</include>
 						<include>**/*Test.java</include>
@@ -157,7 +157,7 @@
 						<excludes>>
                             <exclude>**/sandbox/*</exclude>
                             <exclude>**/dto/unused/*</exclude>
-							<!--  <exclude>**/dto/*</exclude> -->
+
                       </excludes>
 
                   </configuration>

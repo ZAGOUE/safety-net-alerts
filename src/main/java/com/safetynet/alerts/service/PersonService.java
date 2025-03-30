@@ -50,7 +50,7 @@ public class PersonService {
     public Optional<Person> getPersonByName(String firstName, String lastName) {
         return jsonDataLoader.getAllPersons().stream()
                 .filter(p -> p.getFirstName().equalsIgnoreCase(firstName) && p.getLastName().equalsIgnoreCase(lastName))
-                .findFirst(); // Retourne un Optional<Person>
+                .findFirst();
     }
 
     /**
@@ -80,7 +80,7 @@ public class PersonService {
 
     public boolean updatePerson(String firstName, String lastName, Person updatedPerson) {
         Optional<Person> personOpt = getPersonByName(firstName, lastName);
-        if (personOpt.isPresent()) { // Vérifie si la personne existe
+        if (personOpt.isPresent()) {
             Person person = personOpt.get();
             person.setAddress(updatedPerson.getAddress());
             person.setCity(updatedPerson.getCity());
@@ -133,7 +133,7 @@ public class PersonService {
                             .findFirst()
                             .orElse(null);
 
-                    // Calcul de l'âge
+
                     int age = record != null ? calculateAge(record.getBirthdate()) : 0;
 
                     // Conversion des listes en chaînes de caractères
@@ -183,7 +183,7 @@ public class PersonService {
             return List.of();
         }
 
-        // Conversion de la liste de Person en PersonDTO
+
         List<PersonDTO> personDTOList = persons.stream()
                 .map(person -> new PersonDTO(person, null))
                 .collect(Collectors.toList());

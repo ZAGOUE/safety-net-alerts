@@ -51,14 +51,14 @@ class FirestationServiceTest {
 
     @Test
     void testUpdateFirestation() {
-        Firestation updatefirestation = new Firestation("1509 Culver St", 5); // Crée un objet Firestation
-        assertTrue(firestationService.updateFirestation("1509 Culver St", updatefirestation)); // Utilise l'objet
+        Firestation updatefirestation = new Firestation("1509 Culver St", 5);
+        assertTrue(firestationService.updateFirestation("1509 Culver St", updatefirestation));
     }
     @Test
     void testAddFirestation_Success() {
         Firestation newFirestation = new Firestation("10 New Street", 3);
 
-        when(jsonDataLoader.getAllFirestations()).thenReturn(new ArrayList<>()); // Simulation d'une liste vide initialement
+        when(jsonDataLoader.getAllFirestations()).thenReturn(new ArrayList<>());
 
         boolean added = firestationService.addFirestation(newFirestation);
 
@@ -171,7 +171,7 @@ class FirestationServiceTest {
         );
 
         List<MedicalRecord> mockMedicalRecords = List.of(
-                new MedicalRecord("Alice", "Smith", "08/15/2015", List.of("med1"), List.of("allergy1")) // Moins de 18 ans
+                new MedicalRecord("Alice", "Smith", "08/15/2015", List.of("med1"), List.of("allergy1"))
         );
 
 

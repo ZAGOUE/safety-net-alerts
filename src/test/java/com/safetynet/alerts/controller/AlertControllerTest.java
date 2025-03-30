@@ -113,10 +113,10 @@ class AlertControllerTest {
 
     @Test
     void testGetFloodStations() throws Exception {
-        // Création d'une `Person`
+
         Person person = new Person("John", "Doe", "123 Street", "City", "12345", "123456789", "email@example.com", "01/01/1990");
 
-        // Création d'un `MedicalRecord`
+
         MedicalRecord medicalRecord = new MedicalRecord("John", "Doe", "01/01/1990", List.of("med1"), List.of("allergy1"));
 
 

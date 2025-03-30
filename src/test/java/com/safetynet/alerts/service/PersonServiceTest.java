@@ -105,14 +105,13 @@ class PersonServiceTest {
     void testGetCommunityEmails() {
         Set<String> emails = personService.getCommunityEmails("Culver");
         assertNotNull(emails);
-        assertTrue(emails.contains("jaboyd@email.com")); // adapte selon ton data.json
+        assertTrue(emails.contains("jaboyd@email.com"));
     }
     @Test
     void testCalculateAge() {
         int age = personService.calculateAge("01/01/2000");
-        assertTrue(age > 0); // ou assertEquals(25, age) selon la date du jour
+        assertTrue(age > 0);
     }
-
 
 
 }

@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PersonController.class)
-@Import(PersonService.class) // ✅ Corrige @MockBean déprécié
+@Import(PersonService.class)
 @ContextConfiguration(classes = PersonController.class)
 public class PersonControllerTest {
 
@@ -29,10 +29,10 @@ public class PersonControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private PersonService personService; // ✅ Remplace @MockBean
+    private PersonService personService;
 
     @InjectMocks
-    private PersonController personController; // ✅ Injecte le contrôleur
+    private PersonController personController;
 
     @Test
     void testGetPersonByName_Found() throws Exception {
