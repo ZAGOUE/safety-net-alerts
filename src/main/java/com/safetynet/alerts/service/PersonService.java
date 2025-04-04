@@ -64,14 +64,17 @@ public class PersonService {
         if (persons.stream().noneMatch(p -> p.getFirstName().equalsIgnoreCase(person.getFirstName()) &&
                 p.getLastName().equalsIgnoreCase(person.getLastName()))) {
             persons.add(person);
-            logger.info("Ajout d'une nouvelle personne : {} {}", person.getFirstName(), person.getLastName());
 
+            // ✅ Ajoute cette ligne pour enregistrer les modifications dans le fichier :
+            jsonDataLoader.saveAllPersons(persons);
+
+            logger.info("Ajout d'une nouvelle personne : {} {}", person.getFirstName(), person.getLastName());
             return true;
         }
         logger.warn("Ajout échoué : la personne {} {} existe déjà", person.getFirstName(), person.getLastName());
-
         return false;
     }
+
 
     /**
      * Mise à jour des informations liées à une personne
@@ -79,22 +82,33 @@ public class PersonService {
      */
 
     public boolean updatePerson(String firstName, String lastName, Person updatedPerson) {
-        Optional<Person> personOpt = getPersonByName(firstName, lastName);
-        if (personOpt.isPresent()) {
-            Person person = personOpt.get();
-            person.setAddress(updatedPerson.getAddress());
-            person.setCity(updatedPerson.getCity());
-            person.setZip(updatedPerson.getZip());
-            person.setPhone(updatedPerson.getPhone());
-            person.setEmail(updatedPerson.getEmail());
-            logger.info("Mise à jour réussie pour : {} {}", firstName, lastName);
+        List<Person> persons = jsonDataLoader.getAllPersons();
 
-            return true;
+        for (int i = 0; i < persons.size(); i++) {
+            Person person = persons.get(i);
+            if (person.getFirstName().equalsIgnoreCase(firstName)
+                    && person.getLastName().equalsIgnoreCase(lastName)) {
+
+                // Mise à jour des champs
+                person.setAddress(updatedPerson.getAddress());
+                person.setCity(updatedPerson.getCity());
+                person.setZip(updatedPerson.getZip());
+                person.setPhone(updatedPerson.getPhone());
+                person.setEmail(updatedPerson.getEmail());
+
+                logger.info("Mise à jour de la personne : {} {}", firstName, lastName);
+
+                // ✅ Enregistrement dans le fichier
+                jsonDataLoader.saveAllPersons(persons);
+
+                return true;
+            }
         }
-        logger.warn("Mise à jour échouée : personne non trouvée - {} {}", firstName, lastName);
 
+        logger.warn("Personne non trouvée pour mise à jour : {} {}", firstName, lastName);
         return false;
     }
+
 
     /**
      * Supprime une personne par ses nom et prénom
@@ -102,17 +116,26 @@ public class PersonService {
      */
 
     public boolean deletePerson(String firstName, String lastName) {
+        List<Person> persons = jsonDataLoader.getAllPersons();
 
-       boolean removed = jsonDataLoader.getAllPersons().removeIf(
-                p -> p.getFirstName().equalsIgnoreCase(firstName) && p.getLastName().equalsIgnoreCase(lastName));
+        boolean removed = persons.removeIf(
+                p -> p.getFirstName().equalsIgnoreCase(firstName)
+                        && p.getLastName().equalsIgnoreCase(lastName)
+        );
+
         if (removed) {
             logger.info("Suppression réussie de la personne : {} {}", firstName, lastName);
+
+            // ✅ Sauvegarde de la nouvelle liste
+            jsonDataLoader.saveAllPersons(persons);
+
         } else {
             logger.warn("Suppression échouée : personne introuvable - {} {}", firstName, lastName);
         }
-        return removed;
 
+        return removed;
     }
+
     /**
      * Récupère les informations complètes (adresse, email, âge, antécédents médicaux)
      * de toutes les personnes portant le même nom de famille.

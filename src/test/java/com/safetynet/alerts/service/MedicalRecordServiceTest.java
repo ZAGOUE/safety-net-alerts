@@ -1,14 +1,34 @@
 package com.safetynet.alerts.service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.BeforeEach;
+
 
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.JsonDataLoader;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MedicalRecordServiceTest {
+
+    @BeforeEach
+    void setUp() throws IOException {
+        Files.copy(
+                Path.of("src/test/resources/data-backup.json"),
+                Path.of("src/main/resources/data.json"),
+                StandardCopyOption.REPLACE_EXISTING
+        );
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(MedicalRecordServiceTest.class);
     private final MedicalRecordService medicalRecordService = new MedicalRecordService(new JsonDataLoader());
 
     @Test
@@ -20,14 +40,14 @@ class MedicalRecordServiceTest {
 
     @Test
     void testAddMedicalRecord() {
-        MedicalRecord record = new MedicalRecord("Jane", "Doe", "01/01/1990", List.of("Aspirin"), List.of("Peanuts"));
+        MedicalRecord record = new MedicalRecord("Doudou", "LeZebre", "01/01/1990", List.of("Aspirin"), List.of("Peanuts"));
         assertTrue(medicalRecordService.addMedicalRecord(record));
     }
 
     @Test
     void testUpdateMedicalRecord() {
         MedicalRecord updatedRecord = new MedicalRecord("John", "Boyd", "03/06/1984",
-                List.of("med1:500mg", "med2:250mg"),
+                List.of("doliprane:500mg", "med2:250mg"),
                 List.of("pollen", "nuts"));
 
         assertTrue(medicalRecordService.updateMedicalRecord("John", "Boyd", updatedRecord));

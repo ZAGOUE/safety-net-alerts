@@ -36,6 +36,7 @@ public class FirestationService {
         for (Firestation firestation : firestations) {
             if (firestation.getAddress().equalsIgnoreCase(address)) {
                 firestation.setStation(updateFirestation.getStation());
+                jsonDataLoader.saveAllFirestations(firestations);
                 logger.info("firestation is up to date : {}", address);
                 return true;
             }
@@ -46,25 +47,39 @@ public class FirestationService {
     /**
      * Ajoute une nouvelle caserne.
      */
-    public boolean addFirestation(Firestation firestation) {
-        List<Firestation> stations = jsonDataLoader.getAllFirestations();
+    public boolean addFirestation(Firestation newFirestation) {
+        List<Firestation> firestations = jsonDataLoader.getAllFirestations();
+        boolean exists = firestations.stream().anyMatch(f ->
+                f.getAddress().equalsIgnoreCase(newFirestation.getAddress()) &&
+                        f.getStation() == newFirestation.getStation());
 
-        if (stations.stream().anyMatch(fs -> fs.getAddress().equalsIgnoreCase(firestation.getAddress()))) {
+        if (!exists) {
+            firestations.add(newFirestation);
+            jsonDataLoader.saveAllFirestations(firestations); // 🔥 Enregistrement dans data.json
+            logger.info("Ajout d'une nouvelle firestation : {}", newFirestation);
+            return true;
+        } else {
+            logger.warn("Firestation déjà existante : {}", newFirestation);
             return false;
         }
-        stations.add(firestation);
-        logger.info("Ajout d'une nouvelle caserne : {}", firestation);
-
-        return true;
     }
+
+
     /**
      * Supprime une caserne par son adresse.
      */
     public boolean deleteFirestation(String address) {
         List<Firestation> stations = jsonDataLoader.getAllFirestations();
-        logger.info("Suppression de la caserne à l'adresse : {}", address);
-        return stations.removeIf(fs -> fs.getAddress().equalsIgnoreCase(address));
+        boolean removed = stations.removeIf(fs -> fs.getAddress().equalsIgnoreCase(address));
+        if (removed) {
+            jsonDataLoader.saveAllFirestations(stations); // ✅ Enregistrement
+            logger.info("Suppression réussie de la caserne à l'adresse : {}", address);
+        } else {
+            logger.warn("Aucune caserne trouvée à supprimer à l'adresse : {}", address);
+        }
+        return removed;
     }
+
 
     /**
      * Récupérer les personnes couvertes par une caserne

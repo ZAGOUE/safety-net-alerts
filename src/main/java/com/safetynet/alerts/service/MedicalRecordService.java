@@ -11,11 +11,18 @@ import java.util.Optional;
 
 @Service
 public class MedicalRecordService {
+
     private static final Logger logger = LoggerFactory.getLogger(MedicalRecordService.class);
     private final List<MedicalRecord> medicalRecords;
 
+    private final JsonDataLoader jsonDataLoader;
+
+
+
+
     public MedicalRecordService(JsonDataLoader jsonDataLoader) {
-        this.medicalRecords = jsonDataLoader.getData().getMedicalrecords();
+        this.jsonDataLoader = jsonDataLoader;
+        this.medicalRecords = jsonDataLoader.getAllMedicalRecords();
         logger.info("Chargement des dossiers médicaux terminé.");
     }
 
@@ -43,14 +50,24 @@ public class MedicalRecordService {
     }
 
     public boolean addMedicalRecord(MedicalRecord medicalRecord) {
-        if (getMedicalRecordByName(medicalRecord.getFirstName(), medicalRecord.getLastName()).isPresent()) {
-            logger.error("Échec : Un dossier médical existe déjà pour {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
+        List<MedicalRecord> records = jsonDataLoader.getAllMedicalRecords();
+
+        boolean exists = records.stream()
+                .anyMatch(r -> r.getFirstName().equalsIgnoreCase(medicalRecord.getFirstName())
+                        && r.getLastName().equalsIgnoreCase(medicalRecord.getLastName()));
+
+        if (exists) {
+            logger.warn("Ajout échoué : dossier médical existe déjà pour {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
             return false;
         }
-        medicalRecords.add(medicalRecord);
-        logger.info("Nouveau dossier médical ajouté pour {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
+
+        records.add(medicalRecord);
+        jsonDataLoader.saveAllMedicalRecords(records); // ✅ très bien, on sauvegarde
+        logger.info("Dossier médical ajouté avec succès pour {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
         return true;
     }
+
+
 
 
     public boolean updateMedicalRecord(String firstName, String lastName, MedicalRecord updatedRecord) {
@@ -64,6 +81,7 @@ public class MedicalRecordService {
             recordToUpdate.setBirthdate(updatedRecord.getBirthdate());
             recordToUpdate.setMedications(updatedRecord.getMedications());
             recordToUpdate.setAllergies(updatedRecord.getAllergies());
+            jsonDataLoader.saveAllMedicalRecords(medicalRecords);
             return true;
         }
         logger.warn("Dossier médical à mettre à jour introuvable : {} {}", firstName, lastName);
@@ -74,6 +92,7 @@ public class MedicalRecordService {
     public boolean deleteMedicalRecord(String firstName, String lastName) {
         if (medicalRecords.removeIf(record -> record.getFirstName().equalsIgnoreCase(firstName)
                 && record.getLastName().equalsIgnoreCase(lastName))) {
+            jsonDataLoader.saveAllMedicalRecords(medicalRecords);
             logger.info("Suppression réussie du dossier médical de {} {}", firstName, lastName);
             return true;
         } else {

@@ -6,40 +6,46 @@ import com.safetynet.alerts.model.Firestation;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.JsonDataLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+
 class FirestationServiceTest {
-    @InjectMocks
+
+    private static final Logger logger = LogManager.getLogger(FirestationServiceTest.class);
+
+
     private FirestationService firestationService;
 
-    @Mock
     private JsonDataLoader jsonDataLoader;
 
     @BeforeEach
-    void setUp() {
-        List<Firestation> mockFirestations = List.of(
-                new Firestation("1509 Culver St", 3),
-                new Firestation("29 15th St", 2)
+    void setUp() throws Exception {
+        // 🔁 Restaure l’état initial du fichier JSON avant chaque test
+        Files.copy(
+                Path.of("src/test/resources/data-backup.json"),
+                Path.of("src/main/resources/data.json"),
+                StandardCopyOption.REPLACE_EXISTING
         );
 
-        Mockito.lenient().when(jsonDataLoader.getAllFirestations()).thenReturn(mockFirestations);
+      jsonDataLoader = new JsonDataLoader();
+        firestationService = new FirestationService(jsonDataLoader);
     }
+
 
 
     @Test
@@ -50,15 +56,28 @@ class FirestationServiceTest {
     }
 
     @Test
-    void testUpdateFirestation() {
-        Firestation updatefirestation = new Firestation("1509 Culver St", 5);
-        assertTrue(firestationService.updateFirestation("1509 Culver St", updatefirestation));
+    void testUpdateFirestation_Success() {
+        Firestation updated = new Firestation("1509 Culver St", 99); // l'adresse existe dans le (JSON).
+
+        boolean updatedResult = firestationService.updateFirestation("1509 Culver St", updated);
+
+        logger.info("Test update : {}", updatedResult ? "SUCCÈS" : "ÉCHEC");
+        assertTrue(updatedResult, "La mise à jour aurait dû réussir !");
     }
     @Test
-    void testAddFirestation_Success() {
-        Firestation newFirestation = new Firestation("10 New Street", 3);
+    void testUpdateFirestation_Echec() {
+        Firestation updated = new Firestation("Adresse inconnue", 2);
 
-        when(jsonDataLoader.getAllFirestations()).thenReturn(new ArrayList<>());
+        boolean updatedResult = firestationService.updateFirestation("Adresse inconnue", updated);
+
+        logger.info("Test update (échec) : {}", updatedResult ? "SUCCÈS" : "ÉCHEC ATTENDU");
+        assertFalse(updatedResult, "La mise à jour aurait dû échouer !");
+    }
+
+
+    @Test
+    void testAddFirestation_Success() {
+        Firestation newFirestation = new Firestation("10 Paris Street", 6);
 
         boolean added = firestationService.addFirestation(newFirestation);
 
@@ -67,16 +86,20 @@ class FirestationServiceTest {
 
     @Test
     void testDeleteFirestation_Success() {
-        Firestation existingFirestation = new Firestation("1509 Culver St", 1);
-        List<Firestation> initialList = new ArrayList<>(List.of(existingFirestation));
+        boolean deleted = firestationService.deleteFirestation("1509 Culver St"); // existant dans le fichier
 
-        when(jsonDataLoader.getAllFirestations()).thenReturn(new ArrayList<>(List.of(existingFirestation)));
-
-
-        boolean deleted = firestationService.deleteFirestation("1509 Culver St");
-
+        logger.info("Test suppression : {}", deleted ? "SUCCÈS" : "ÉCHEC");
         assertTrue(deleted, "La suppression aurait dû réussir !");
     }
+    @Test
+    void testDeleteFirestation_Echec() {
+        boolean deleted = firestationService.deleteFirestation("Adresse Inexistante");
+
+        logger.info("Test suppression (échec) : {}", deleted ? "SUCCÈS" : "ÉCHEC ATTENDU");
+        assertFalse(deleted, "La suppression aurait dû échouer !");
+    }
+
+
 
     @Test
     void testGetPersonsByStation() {

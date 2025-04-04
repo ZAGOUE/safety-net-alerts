@@ -3,35 +3,74 @@ package com.safetynet.alerts.repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.safetynet.alerts.model.DataWrapper;
-import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.Firestation;
 import com.safetynet.alerts.model.MedicalRecord;
+import com.safetynet.alerts.model.Person;
 import lombok.Getter;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
-@Getter
 @Repository
 public class JsonDataLoader {
-    private final DataWrapper data;
 
-    public JsonDataLoader() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data.json")) {
-            if (inputStream == null) {
-                throw new RuntimeException("ERREUR : Impossible de charger le fichier data.json !");
+    private static final Logger logger = LoggerFactory.getLogger(JsonDataLoader.class);
+
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
+    private String filePath; // 🔁 plus de final
+
+    @Getter
+    private DataWrapper data;
+
+    // ✅ Constructeur utilisé par Spring avec injection ou valeur par défaut
+    public JsonDataLoader(@Value("${data.file.path:src/main/resources/data.json}") String filePath) {
+        this.filePath = filePath;
+        loadData();
+    }
+
+
+    private void loadData() {
+        try {
+            File file = new File(filePath);
+            if (!file.exists()) {
+                throw new RuntimeException("ERREUR : Fichier introuvable : " + filePath);
             }
-            System.out.println("data.json trouvé, chargement des données...");
-            this.data = objectMapper.readValue(inputStream, DataWrapper.class);
-            System.out.println("Données JSON chargées avec succès !");
-        } catch (Exception e) {
-            throw new RuntimeException("Erreur lors du chargement des données JSON", e);
+            this.data = objectMapper.readValue(file, DataWrapper.class);
+            System.out.println("✅ Données chargées depuis : " + filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("❌ Erreur lors du chargement des données JSON", e);
         }
     }
+
+    private void saveData() {
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(filePath), data);
+        } catch (IOException e) {
+            logger.error("Erreur lors de la sauvegarde du fichier JSON", e);
+        }
+    }
+    public void saveAllMedicalRecords(List<MedicalRecord> medicalRecords) {
+        data.setMedicalrecords(medicalRecords);
+        saveData();
+    }
+
+
+    public void saveAllPersons(List<Person> persons) {
+        data.setPersons(persons);
+        saveData();
+    }
+    public void saveAllFirestations(List<Firestation> firestations) {
+        data.setFirestations(firestations);
+        saveData();
+    }
+
+
 
     public List<Person> getAllPersons() {
         return data.getPersons();
@@ -44,9 +83,9 @@ public class JsonDataLoader {
     public List<MedicalRecord> getAllMedicalRecords() {
         return data.getMedicalrecords();
     }
-    
+    // 🔁 Constructeur sans argument utilisé par les tests
+    public JsonDataLoader() {
+        this("src/main/resources/data.json");
+    }
+
 }
-
-
-
-
