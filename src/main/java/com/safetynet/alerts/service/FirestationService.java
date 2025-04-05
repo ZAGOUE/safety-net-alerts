@@ -55,7 +55,7 @@ public class FirestationService {
 
         if (!exists) {
             firestations.add(newFirestation);
-            jsonDataLoader.saveAllFirestations(firestations); // 🔥 Enregistrement dans data.json
+            jsonDataLoader.saveAllFirestations(firestations);
             logger.info("Ajout d'une nouvelle firestation : {}", newFirestation);
             return true;
         } else {
@@ -72,7 +72,7 @@ public class FirestationService {
         List<Firestation> stations = jsonDataLoader.getAllFirestations();
         boolean removed = stations.removeIf(fs -> fs.getAddress().equalsIgnoreCase(address));
         if (removed) {
-            jsonDataLoader.saveAllFirestations(stations); // ✅ Enregistrement
+            jsonDataLoader.saveAllFirestations(stations);
             logger.info("Suppression réussie de la caserne à l'adresse : {}", address);
         } else {
             logger.warn("Aucune caserne trouvée à supprimer à l'adresse : {}", address);

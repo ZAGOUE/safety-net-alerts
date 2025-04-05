@@ -19,6 +19,22 @@ public class MedicalRecordController {
     public MedicalRecordController(MedicalRecordService medicalRecordService) {
         this.medicalRecordService = medicalRecordService;
     }
+    @PutMapping
+    public ResponseEntity<String> updateMedicalRecord(@RequestBody MedicalRecord updatedRecord) {
+        logger.info("Requête PUT - Mise à jour du dossier médical de {} {}", updatedRecord.getFirstName(), updatedRecord.getLastName());
+        boolean updated = medicalRecordService.updateMedicalRecord(
+                updatedRecord.getFirstName(),
+                updatedRecord.getLastName(),
+                updatedRecord);
+
+        if (updated) {
+            return ResponseEntity.ok("Dossier médical mis à jour avec succès.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 
     @GetMapping
     public ResponseEntity<List<MedicalRecord>> getAllMedicalRecords() {

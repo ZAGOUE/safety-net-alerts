@@ -62,7 +62,7 @@ public class MedicalRecordService {
         }
 
         records.add(medicalRecord);
-        jsonDataLoader.saveAllMedicalRecords(records); // ✅ très bien, on sauvegarde
+        jsonDataLoader.saveAllMedicalRecords(records);
         logger.info("Dossier médical ajouté avec succès pour {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
         return true;
     }

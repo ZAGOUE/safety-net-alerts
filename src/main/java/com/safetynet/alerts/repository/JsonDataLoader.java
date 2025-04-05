@@ -23,12 +23,12 @@ public class JsonDataLoader {
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-    private String filePath; // 🔁 plus de final
+    private String filePath;
 
     @Getter
     private DataWrapper data;
 
-    // ✅ Constructeur utilisé par Spring avec injection ou valeur par défaut
+    // Constructeur avec valeur par défaut
     public JsonDataLoader(@Value("${data.file.path:src/main/resources/data.json}") String filePath) {
         this.filePath = filePath;
         loadData();
@@ -42,9 +42,11 @@ public class JsonDataLoader {
                 throw new RuntimeException("ERREUR : Fichier introuvable : " + filePath);
             }
             this.data = objectMapper.readValue(file, DataWrapper.class);
-            System.out.println("✅ Données chargées depuis : " + filePath);
+            logger.info("Données chargées depuis : {}", filePath);
+
         } catch (IOException e) {
-            throw new RuntimeException("❌ Erreur lors du chargement des données JSON", e);
+            logger.error("Erreur lors du chargement des données JSON", e);
+            throw new RuntimeException("Erreur lors du chargement des données JSON", e);
         }
     }
 
@@ -83,7 +85,7 @@ public class JsonDataLoader {
     public List<MedicalRecord> getAllMedicalRecords() {
         return data.getMedicalrecords();
     }
-    // 🔁 Constructeur sans argument utilisé par les tests
+    // Constructeur sans argument
     public JsonDataLoader() {
         this("src/main/resources/data.json");
     }

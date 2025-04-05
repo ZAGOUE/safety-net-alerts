@@ -206,6 +206,24 @@
     "phone" : "841-874-7458",
     "email" : "gramps@email.com",
     "birthdate" : null
+  }, {
+    "firstName" : "Doudou",
+    "lastName" : "LaRue",
+    "address" : "113 rue de Paris",
+    "city" : "Culver",
+    "zip" : "12345",
+    "phone" : "555-9876",
+    "email" : "larue@habitants.com",
+    "birthdate" : "01/01/1990"
+  }, {
+    "firstName" : "Doudou",
+    "lastName" : "LeZebre",
+    "address" : "120 rue de Londres",
+    "city" : "Culver",
+    "zip" : "54321",
+    "phone" : "555-1111",
+    "email" : "zebre@habitants.com",
+    "birthdate" : "01/01/1990"
   } ],
   "firestations" : [ {
     "address" : "1509 Culver St",
@@ -223,9 +241,6 @@
     "address" : "748 Townings Dr",
     "station" : 3
   }, {
-    "address" : "112 Steppes Pl",
-    "station" : 3
-  }, {
     "address" : "489 Manchester St",
     "station" : 4
   }, {
@@ -234,9 +249,6 @@
   }, {
     "address" : "908 73rd St",
     "station" : 1
-  }, {
-    "address" : "112 Steppes Pl",
-    "station" : 4
   }, {
     "address" : "947 E. Rose Dr",
     "station" : 1
@@ -406,7 +418,14 @@
     "firstName" : "Eric",
     "lastName" : "Cadigan",
     "birthdate" : "08/06/1945",
-    "medications" : [ "tradoxidine:400mg" ],
+    "medications" : [ "Ibuprofen" ],
     "allergies" : [ ]
+  }, {
+    "age" : 35,
+    "firstName" : "Doudou",
+    "lastName" : "LeZebre",
+    "birthdate" : "01/01/1990",
+    "medications" : [ "Doliprane" ],
+    "allergies" : [ "Gluten" ]
   } ]
 }

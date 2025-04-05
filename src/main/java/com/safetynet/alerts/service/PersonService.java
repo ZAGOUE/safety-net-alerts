@@ -56,6 +56,7 @@ public class PersonService {
     /**
      * Ajoute une nouvelle personne
      *
+     *
      */
 
 
@@ -65,7 +66,8 @@ public class PersonService {
                 p.getLastName().equalsIgnoreCase(person.getLastName()))) {
             persons.add(person);
 
-            // ✅ Ajoute cette ligne pour enregistrer les modifications dans le fichier :
+            // fonction pour enregistrer les modifications dans le fichier (à vérifier dans toutes les méthodes)
+
             jsonDataLoader.saveAllPersons(persons);
 
             logger.info("Ajout d'une nouvelle personne : {} {}", person.getFirstName(), person.getLastName());
@@ -98,7 +100,7 @@ public class PersonService {
 
                 logger.info("Mise à jour de la personne : {} {}", firstName, lastName);
 
-                // ✅ Enregistrement dans le fichier
+
                 jsonDataLoader.saveAllPersons(persons);
 
                 return true;
@@ -126,7 +128,7 @@ public class PersonService {
         if (removed) {
             logger.info("Suppression réussie de la personne : {} {}", firstName, lastName);
 
-            // ✅ Sauvegarde de la nouvelle liste
+
             jsonDataLoader.saveAllPersons(persons);
 
         } else {

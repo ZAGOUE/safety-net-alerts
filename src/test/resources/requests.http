@@ -31,6 +31,90 @@ GET http://localhost:8080/alert/communityEmail?city=Culver
 ### Récupérer une personne par nom
 GET http://localhost:8080/person/Jamie/Peters
 
-Accept: application/json
+
+
+
+### Ajouter une nouvelle personne - ok
+POST http://localhost:8080/person
+Content-Type: application/json
+
+{
+  "firstName": "Doudou",
+  "lastName": "LeZebre",
+  "address": "123 rue de Paris",
+  "city": "Culver",
+  "zip": "12345",
+  "phone": "555-9876",
+  "email": "doudou@example.com",
+  "birthdate": "01/01/1990"
+}
+
+### Modifier une personne existante - ok
+PUT http://localhost:8080/person/Doudou/LeZebre
+Content-Type: application/json
+
+{
+  "firstName": "Doudou",
+  "lastName": "LeZebre",
+  "address": "120 rue de Londres",
+  "city": "Culver",
+  "zip": "54321",
+  "phone": "555-1111",
+  "email": "zebre@habitants.com",
+  "birthdate": "01/01/1990"
+}
+
+### Supprimer une personne - ok
+DELETE http://localhost:8080/person/Doudou/LeZebre
+
+### Ajouter une caserne - ok
+POST http://localhost:8080/firestation
+Content-Type: application/json
+
+{
+  "address": "10 rue des pompiers",
+  "station": 4
+}
+
+### Mettre à jour une caserne - ok
+PUT http://localhost:8080/firestation?address=112 Steppes Pl
+Content-Type: application/json
+
+{
+  "address": "112 Steppes Pl",
+  "station": 9
+}
+
+
+### Supprimer une caserne - ok
+DELETE http://localhost:8080/firestation/112 Steppes Pl
+Content-Type: application/json
+
+### Ajouter un dossier médical - ok
+POST http://localhost:8080/medicalRecord
+Content-Type: application/json
+
+{
+  "firstName": "Doudou",
+  "lastName": "LeZebre",
+  "birthdate": "01/01/1990",
+  "medications": ["Doliprane"],
+  "allergies": ["Gluten"]
+}
+
+### Modifier un dossier médical - ok
+PUT http://localhost:8080/medicalRecord
+Content-Type: application/json
+
+{
+  "firstName": "Eric",
+  "lastName": "Cadigan",
+  "birthdate": "08/06/1945",
+  "medications": ["Ibuprofen"],
+  "allergies": []
+}
+
+### Supprimer un dossier médical - ok
+DELETE http://localhost:8080/medicalRecord/Doudou/LeZebre
 
 
